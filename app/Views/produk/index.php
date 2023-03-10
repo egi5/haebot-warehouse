@@ -7,12 +7,7 @@
 
     <div class="d-flex mb-0">
         <div class="me-auto mb-1">
-            <h3 style="color: #566573;">Data Karyawan</h3>
-        </div>
-        <div class="mb-1">
-            <a class="btn btn-sm btn-outline-secondary mb-3" id="tombolTambah">
-                <i class="fa-fw fa-solid fa-plus"></i> Tambah Karyawan
-            </a>
+            <h3 style="color: #566573;">Data Produk</h3>
         </div>
     </div>
 
@@ -23,42 +18,16 @@
             <thead>
                 <tr>
                     <th class="text-center" width="5%">No</th>
-                    <th class="text-center" width="30%">Nama</th>
-                    <th class="text-center" width="10%">Jabatan</th>
-                    <th class="text-center" width="10%">Pendidikan</th>
-                    <th class="text-center" width="10%">No Telepon</th>
-                    <th class="text-center" width="20%">Email</th>
-                    <th class="text-center" width="15%">Aksi</th>
+                    <th class="text-center" width="35%">Nama</th>
+                    <th class="text-center" width="15%">Tipe</th>
+                    <th class="text-center" width="15%">Harga Beli</th>
+                    <th class="text-center" width="15%">Harga Jual</th>
+                    <th class="text-center" width="10%">Stok</th>
+                    <th class="text-center" width="5%">Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                <?php $no = 1 ?>
-                <?php foreach ($karyawan as $karyawan) : ?>
-                    <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= $karyawan['nama_lengkap'] ?></td>
-                        <td><?= $karyawan['jabatan'] ?></td>
-                        <td><?= $karyawan['pendidikan'] ?></td>
-                        <td><?= $karyawan['no_telp'] ?></td>
-                        <td><?= $karyawan['email'] ?></td>
-                        <td class="text-center">
-                            <a title="Detail" class="px-2 py-0 btn btn-sm btn-outline-dark" onclick="showModalDetail(<?= $karyawan['id'] ?>)">
-                                <i class="fa-fw fa-solid fa-magnifying-glass"></i>
-                            </a>
 
-                            <a title="Edit" class="px-2 py-0 btn btn-sm btn-outline-primary" onclick="showModalEdit(<?= $karyawan['id'] ?>)">
-                                <i class="fa-fw fa-solid fa-pen"></i>
-                            </a>
-
-                            <form id="form_delete" method="POST" class="d-inline">
-                                <?= csrf_field() ?>
-                                <input type="hidden" name="_method" value="DELETE">
-                            </form>
-                            <button onclick="confirm_delete(<?= $karyawan['id'] ?>)" title="Hapus" type="button" class="px-2 py-0 btn btn-sm btn-outline-danger"><i class="fa-fw fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                </tr>
             </tbody>
         </table>
     </div>
@@ -67,12 +36,14 @@
 
 <?= $this->include('MyLayout/js') ?>
 
+
+
 <!-- Modal -->
 <div class="modal fade" id="my-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="judulModal"></h1>
+                <h1 class="modal-title fs-5" id="judulModal">Tambah Produk</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="isiForm">
@@ -82,6 +53,8 @@
     </div>
 </div>
 <!-- Modal -->
+
+
 
 <script>
     // Bahan Alert
@@ -101,7 +74,43 @@
     })
 
     $(document).ready(function() {
-        $('#tabel').DataTable();
+        $('#tabel').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '<?= site_url() ?>getdataproduk',
+            order: [],
+            columns: [{
+                    data: 'no',
+                    orderable: false
+                },
+                {
+                    data: 'nama'
+                },
+                {
+                    data: 'tipe'
+                },
+                {
+                    data: 'harga_beli',
+                    render: function(data, type, row) {
+                        return 'Rp ' + data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+                    }
+                },
+                {
+                    data: 'harga_jual',
+                    render: function(data, type, row) {
+                        return 'Rp ' + data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+                    }
+                },
+                {
+                    data: 'stok'
+                },
+                {
+                    data: 'aksi',
+                    orderable: false,
+                    className: 'text-center'
+                },
+            ]
+        });
 
         // Alert
         var op = <?= (!empty(session()->getFlashdata('pesan')) ? json_encode(session()->getFlashdata('pesan')) : '""'); ?>;
@@ -113,6 +122,7 @@
         }
     });
 
+
     $('#tombolTambah').click(function(e) {
         e.preventDefault();
         showModalTambah();
@@ -121,13 +131,13 @@
     function showModalTambah() {
         $.ajax({
             type: 'GET',
-            url: '<?= site_url() ?>karyawan/new',
+            url: '<?= site_url() ?>produk/new',
             dataType: 'json',
             success: function(res) {
                 if (res.data) {
                     $('#isiForm').html(res.data)
                     $('#my-modal').modal('toggle')
-                    $('#judulModal').html('Tambah Karyawan')
+                    $('#judulModal').html('Tambah Produk')
                 }
             },
             error: function(e) {
@@ -136,37 +146,19 @@
         })
     }
 
-    function showModalEdit(id) {
-        $.ajax({
-            type: 'GET',
-            url: '<?= site_url() ?>karyawan/' + id + '/edit',
-            dataType: 'json',
-            success: function(res) {
-                if (res.data) {
-                    $('#isiForm').html(res.data)
-                    $('#my-modal').modal('toggle')
-                    $('#judulModal').html('Edit Karyawan')
-                    console.log(res.data)
-                } else {
-                    console.log("error")
-                }
-            },
-            error: function(e) {
-                alert('Error \n' + e.responseText);
-            }
-        })
-    }
 
     function showModalDetail(id) {
         $.ajax({
             type: 'GET',
-            url: '<?= site_url() ?>karyawan/' + id,
+            url: '<?= site_url() ?>produk/' + id,
             dataType: 'json',
             success: function(res) {
                 if (res.data) {
                     $('#isiForm').html(res.data)
                     $('#my-modal').modal('toggle')
-                    $('#judulModal').html('Detail Karyawan')
+                    $('#judulModal').html('Detail Produk')
+                } else {
+                    console.log(res)
                 }
             },
             error: function(e) {
@@ -175,8 +167,10 @@
         })
     }
 
+
     function confirm_delete(id) {
         Swal.fire({
+            backdrop: false,
             title: 'Konfirmasi?',
             text: "Apakah yakin menghapus!",
             icon: 'warning',
@@ -186,7 +180,7 @@
             confirmButtonText: 'Ya, hapus!'
         }).then((result) => {
             if (result.isConfirmed) {
-                $('#form_delete').attr('action', '<?= site_url() ?>karyawan/' + id);
+                $('#form_delete').attr('action', '<?= site_url() ?>produk/' + id);
                 $('#form_delete').submit();
             }
         })

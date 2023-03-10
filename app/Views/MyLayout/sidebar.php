@@ -4,70 +4,67 @@
             <div class="nav">
                 <br>
 
-                <?php if (has_permission('Dashboard') || has_permission('SDM')) : ?>
-                    <small class="my-0 ms-3 text-secondary"></small>
+                <?php if (has_permission('Dashboard') || has_permission('pembelian')) : ?>
+                    <small class="my-0 ms-3 text-secondary">Data</small>
                 <?php endif; ?>
 
                 <?php if (has_permission('Dashboard')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>/dashboard">
+                    <a class="nav-link" href="<?= base_url() ?>dashboard">
                         <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-solid fa-gauge"></i>
+                            <i class="fa-fw fa-solid fa-gauge-high"></i>
                         </div>
                         Dashboard
                     </a>
                 <?php endif; ?>
 
-                <?php if (has_permission('SDM')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>/karyawan">
+                <?php if (has_permission('Data Master')) : ?>
+                    <a class="nav-link" href="<?= base_url() ?>produk">
                         <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-solid fa-user"></i>
+                            <i class="fa-fw fa-solid fa-fax"></i>
                         </div>
-                        Karyawan
+                        Produk
                     </a>
                 <?php endif; ?>
 
-                <?php if (has_permission('SDM')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>/divisi">
+                <?php if (has_permission('Data Master')) : ?>
+                    <a class="nav-link" href="<?= base_url() ?>supplier">
                         <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-solid fa-network-wired"></i>
+                            <i class="fa-fw fa-solid fa-handshake-simple"></i>
                         </div>
-                        Divisi
+                        Supplier
                     </a>
                 <?php endif; ?>
 
-                <?php if (has_permission('SDM')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>/rekrutmen">
+                <br>
+
+                <?php if (has_permission('Dashboard') || has_permission('pembelian')) : ?>
+                    <small class="my-0 ms-3 text-secondary">Purchase</small>
+                <?php endif; ?>
+
+                <?php if (has_permission('pembelian')) : ?>
+                    <a class="nav-link" href="<?= base_url() ?>pemesanan">
                         <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-solid fa-folder-plus"></i>
+                            <i class="fa-fw fa-regular fa-rectangle-list"></i>
                         </div>
-                        Rekrutmen
+                        Pemesanan
                     </a>
                 <?php endif; ?>
 
-                <?php if (has_permission('SDM')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>/resign">
+                <?php if (has_permission('pembelian')) : ?>
+                    <a class="nav-link" href="<?= base_url() ?>pembelian">
                         <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-solid fa-folder-minus"></i>
+                            <i class="fa-fw fa-solid fa-list-check"></i>
                         </div>
-                        Resign
+                        Fixing Plan Pemesanan
                     </a>
                 <?php endif; ?>
 
-                <?php if (has_permission('SDM')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>/mutasi">
+                <?php if (has_permission('pembelian')) : ?>
+                    <a class="nav-link" href="<?= base_url() ?>pembelian">
                         <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-solid fa-right-left"></i>
+                            <i class="fa-fw fa-solid fa-bars"></i>
                         </div>
-                        Mutasi
-                    </a>
-                <?php endif; ?>
-
-                <?php if (has_permission('SDM')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>/pengaturan_user">
-                        <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-solid fa-gear"></i>
-                        </div>
-                        Pengaturan User
+                        Data Pembelian
                     </a>
                 <?php endif; ?>
 
