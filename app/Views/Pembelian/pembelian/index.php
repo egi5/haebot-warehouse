@@ -7,7 +7,7 @@
 
     <div class="d-flex mb-0">
         <div class="me-auto mb-1">
-            <h3 style="color: #566573;">Data Pemesanan</h3>
+            <h3 style="color: #566573;">Data Pembelian</h3>
         </div>
         <div class="me-2 mb-1">
             <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>pembelian">
@@ -16,7 +16,7 @@
         </div>
         <div class="mb-1">
             <a class="btn btn-sm btn-outline-secondary mb-3" id="tombolTambah">
-                <i class="fa-fw fa-solid fa-plus"></i> Tambah Pemesanan
+                <i class="fa-fw fa-solid fa-plus"></i> Tambah Pembelian
             </a>
         </div>
     </div>
@@ -53,7 +53,7 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="judulModal">Tambah Pemesanan</h1>
+                <h1 class="modal-title fs-5" id="judulModal">Tambah Pembelian</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="isiForm">
@@ -69,7 +69,7 @@
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="judulModalShow">Detail Pemesanan</h1>
+                <h1 class="modal-title fs-5" id="judulModalShow">Detail Pembelian</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="isiShow">
@@ -103,14 +103,14 @@
         $('#tabel').DataTable({
             processing: true,
             serverSide: true,
-            ajax: '<?= site_url() ?>getdatapemesanan',
+            ajax: '<?= site_url() ?>getdatapembelian',
             order: [],
             columns: [{
                     data: 'no',
                     orderable: false
                 },
                 {
-                    data: 'no_pemesanan'
+                    data: 'no_pembelian'
                 },
                 {
                     data: 'tanggal'
@@ -156,7 +156,7 @@
     function showModalTambah() {
         $.ajax({
             type: 'GET',
-            url: '<?= site_url() ?>pemesanan/new',
+            url: '<?= site_url() ?>pembelian/new',
             dataType: 'json',
             success: function(res) {
                 if (res.data) {
@@ -170,30 +170,10 @@
         })
     }
 
-
-    function showModalDetail(no) {
-        $.ajax({
-            type: 'GET',
-            url: '<?= site_url() ?>pemesanan/' + no,
-            dataType: 'json',
-            success: function(res) {
-                if (res.data) {
-                    $('#isiShow').html(res.data)
-                    $('#my-modal-show').modal('toggle')
-                } else {
-                    console.log(res)
-                }
-            },
-            error: function(e) {
-                alert('Error \n' + e.responseText);
-            }
-        })
-    }
-
     function confirm_delete(id) {
         Swal.fire({
             title: 'Konfirmasi?',
-            text: "Apakah yakin menghapus pemesanan ini?",
+            text: "Apakah yakin menghapus data pembelian ini?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -201,7 +181,7 @@
             confirmButtonText: 'Ya, hapus!'
         }).then((result) => {
             if (result.isConfirmed) {
-                $('#form_delete').attr('action', '<?= site_url() ?>pemesanan/' + id);
+                $('#form_delete').attr('action', '<?= site_url() ?>pembelian/' + id);
                 $('#form_delete').submit();
             }
         })

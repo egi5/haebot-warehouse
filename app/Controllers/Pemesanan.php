@@ -20,18 +20,18 @@ class Pemesanan extends ResourcePresenter
 
     public function getDataPemesanan()
     {
-        // if ($this->request->isAJAX()) {
-        $db = \Config\Database::connect();
-        $data =  $db->table('pemesanan')
-            ->select('pemesanan.id, pemesanan.no_pemesanan, pemesanan.tanggal, supplier.nama as supplier, pemesanan.total_harga_produk, pemesanan.status')
-            ->join('supplier', 'pemesanan.id_supplier = supplier.id', 'left')
-            ->where('pemesanan.deleted_at', null);
+        if ($this->request->isAJAX()) {
+            $db = \Config\Database::connect();
+            $data =  $db->table('pemesanan')
+                ->select('pemesanan.id, pemesanan.no_pemesanan, pemesanan.tanggal, supplier.nama as supplier, pemesanan.total_harga_produk, pemesanan.status')
+                ->join('supplier', 'pemesanan.id_supplier = supplier.id', 'left')
+                ->where('pemesanan.deleted_at', null);
 
-        return DataTable::of($data)
-            ->addNumbering('no')
-            ->add('aksi', function ($row) {
-                if ($row->status == 'Unsaved') {
-                    return '
+            return DataTable::of($data)
+                ->addNumbering('no')
+                ->add('aksi', function ($row) {
+                    if ($row->status == 'Pending') {
+                        return '
                     <a title="List Pemesanan" class="px-2 py-0 btn btn-sm btn-outline-primary" href="' . base_url() . '/list_pemesanan/' . $row->no_pemesanan . '">
                         <i class="fa-fw fa-solid fa-circle-arrow-right"></i>
                     </a>
@@ -42,17 +42,17 @@ class Pemesanan extends ResourcePresenter
                     </form>
                     <button onclick="confirm_delete(' . $row->id . ')" title="Hapus" type="button" class="px-2 py-0 btn btn-sm btn-outline-danger"><i class="fa-fw fa-solid fa-trash"></i></button>
                     ';
-                } else {
-                    return '
+                    } else {
+                        return '
                     <a title="Detail" class="px-2 py-0 btn btn-sm btn-outline-dark" onclick="showModalDetail(\'' . $row->no_pemesanan . '\')">
                         <i class="fa-fw fa-solid fa-magnifying-glass"></i>
                     </a>';
-                }
-            }, 'last')
-            ->toJson(true);
-        // } else {
-        //     return "Tidak bisa load data.";
-        // }
+                    }
+                }, 'last')
+                ->toJson(true);
+        } else {
+            return "Tidak bisa load data.";
+        }
     }
 
 
@@ -183,5 +183,13 @@ class Pemesanan extends ResourcePresenter
 
     public function delete($id = null)
     {
+        $modelPemesananDetail = new PemesananDetailModel();
+        $modelPemesananDetail->where(['id_pemesanan' => $id])->delete();
+
+        $modelPemesanan = new PemesananModel();
+        $modelPemesanan->delete($id);
+
+        session()->setFlashdata('pesan', 'Data pemesanan berhasil dihapus.');
+        return redirect()->to('/pemesanan');
     }
 }
