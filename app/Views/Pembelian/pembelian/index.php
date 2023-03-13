@@ -7,7 +7,7 @@
 
     <div class="d-flex mb-0">
         <div class="me-auto mb-1">
-            <h3 style="color: #566573;">Data Pembelian</h3>
+            <h3 style="color: #566573;">Fixing Pemesanan dan Buat Pembelian</h3>
         </div>
         <div class="me-2 mb-1">
             <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>pembelian">
@@ -16,7 +16,7 @@
         </div>
         <div class="mb-1">
             <a class="btn btn-sm btn-outline-secondary mb-3" id="tombolTambah">
-                <i class="fa-fw fa-solid fa-plus"></i> Tambah Pembelian
+                <i class="fa-fw fa-solid fa-plus"></i> Buat Pembelian
             </a>
         </div>
     </div>
@@ -50,10 +50,10 @@
 
 <!-- Modal -->
 <div class="modal fade" id="my-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="judulModal">Tambah Pembelian</h1>
+                <h1 class="modal-title fs-5" id="judulModal">Buat Pembelian</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="isiForm">

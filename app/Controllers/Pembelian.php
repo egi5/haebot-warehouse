@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\PembelianDetailModel;
 use App\Models\PembelianModel;
+use App\Models\PemesananModel;
 use App\Models\SupplierModel;
 use CodeIgniter\RESTful\ResourcePresenter;
 use \Hermawan\DataTables\DataTable;
@@ -95,65 +96,45 @@ class Pembelian extends ResourcePresenter
     }
 
 
-    // public function create()
-    // {
-    //     if ($this->request->isAJAX()) {
-    //         $validasi = [
-    //             'no_pemesanan' => [
-    //                 'rules' => 'required|is_unique[pemesanan.no_pemesanan]',
-    //                 'errors' => [
-    //                     'required' => 'Nomor pemesanan harus diisi.',
-    //                     'is_unique' => 'Nomor pemesanan sudah ada dalam database.'
-    //                 ]
-    //             ],
-    //             'tanggal' => [
-    //                 'rules' => 'required',
-    //                 'errors' => [
-    //                     'required' => 'tanggal pemesanan harus diisi.',
-    //                 ]
-    //             ],
-    //             'id_supplier' => [
-    //                 'rules' => 'required',
-    //                 'errors' => [
-    //                     'required' => 'Supplier harus dipilih.',
-    //                 ]
-    //             ],
-    //         ];
+    public function create()
+    {
+        $validasi = [
+            'no_pemesanan' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Nomor pemesanan harus diisi.',
+                    'is_unique' => 'Nomor pemesanan sudah ada dalam database.'
+                ]
+            ],
+        ];
 
-    //         if (!$this->validate($validasi)) {
-    //             $validation = \Config\Services::validation();
 
-    //             $error = [
-    //                 'error_no_pemesanan' => $validation->getError('no_pemesanan'),
-    //                 'error_tanggal' => $validation->getError('tanggal'),
-    //                 'error_id_supplier' => $validation->getError('id_supplier'),
-    //             ];
 
-    //             $json = [
-    //                 'error' => $error
-    //             ];
-    //         } else {
+        if (!$this->validate($validasi)) {
+            session()->setFlashdata('pesan', 'Maaf, terjadi error dengan no pemesanan.');
+            return redirect()->to('/pembelian');
+        }
 
-    //             'nomor_pembelian_auto'  => nomor_pembelian_auto(date('Y-m-d'))
-    //             $modelPemesanan = new PemesananModel();
-    //             $data = [
-    //                 'no_pemesanan'          => $this->request->getPost('no_pemesanan'),
-    //                 'tanggal'               => $this->request->getPost('tanggal'),
-    //                 'id_supplier'           => $this->request->getPost('id_supplier'),
-    //             ];
-    //             $modelPemesanan->save($data);
+        date_default_timezone_set('Asia/Jakarta');
 
-    //             $json = [
-    //                 'success' => 'Berhasil menambah data produk',
-    //                 'no_pemesanan' => $this->request->getPost('no_pemesanan'),
-    //             ];
-    //         }
+        $modelPemesanan = new PemesananModel();
+        $pemesanan = $modelPemesanan->getPemesanan($this->request->getPost('no_pemesanan'));
 
-    //         echo json_encode($json);
-    //     } else {
-    //         return 'Tidak bisa load';
-    //     }
-    // }
+        $modelPembelian = new PembelianModel();
+        $data = [
+            'id_pemesanan'      => $pemesanan['id'],
+            'id_supplier'       => $pemesanan['id_supplier'],
+            'id_user'           => $pemesanan['id_user'],
+            'no_pembelian'      => nomor_pembelian_auto(date('Y-m-d')),
+            'tanggal'           => date('Y-m-d'),
+            'origin'            => $pemesanan['origin'],
+            'status'            => 'Diproses',
+        ];
+        dd($data);
+        // $modelPembelian->save($data);
+
+        return redirect()->to('/ekspedisi');
+    }
 
 
     public function edit($id = null)

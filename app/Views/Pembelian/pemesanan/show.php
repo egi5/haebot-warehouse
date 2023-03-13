@@ -1,45 +1,45 @@
 <div class="row mb-2">
-    <div class="col-md-2">
+    <div class="col-md-3">
         <div class="fw-bold">No Pemesanan</div>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-9">
         <?= $pemesanan['no_pemesanan'] ?>
     </div>
 </div>
 <div class="row mb-2">
-    <div class="col-md-2">
+    <div class="col-md-3">
         <div class="fw-bold">Tanggal</div>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-9">
         <?= $pemesanan['tanggal'] ?>
     </div>
 </div>
 <div class="row mb-2">
-    <div class="col-md-2">
+    <div class="col-md-3">
         <div class="fw-bold">Supplier</div>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-9">
         <?= $pemesanan['supplier'] ?>
     </div>
 </div>
 <div class="row mb-2">
-    <div class="col-md-2">
-        <div class="fw-bold">Admin</div>
+    <div class="col-md-3">
+        <div class="fw-bold">Admin Pemesanan</div>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-9">
         <?= $pemesanan['admin'] ?>
     </div>
 </div>
 <div class="row mb-2">
-    <div class="col-md-2">
+    <div class="col-md-3">
         <div class="fw-bold">Status</div>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-9">
         <?= $pemesanan['status'] ?>
     </div>
 </div>
 
-<hr>
+<br>
 
 
 <div class="table-responsive">

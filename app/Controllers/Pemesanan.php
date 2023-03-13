@@ -61,18 +61,22 @@ class Pemesanan extends ResourcePresenter
         if ($this->request->isAJAX()) {
             $modelPemesanan = new PemesananModel();
             $pemesanan = $modelPemesanan->getPemesanan($no);
-            $modelPemesananDetail = new PemesananDetailModel();
-            $pemesanan_detail = $modelPemesananDetail->getListProdukPemesanan($pemesanan['id']);
 
+            if ($pemesanan) {
+                $modelPemesananDetail = new PemesananDetailModel();
+                $pemesanan_detail = $modelPemesananDetail->getListProdukPemesanan($pemesanan['id']);
 
-            $data = [
-                'pemesanan' => $pemesanan,
-                'pemesanan_detail' => $pemesanan_detail,
-            ];
+                $data = [
+                    'pemesanan' => $pemesanan,
+                    'pemesanan_detail' => $pemesanan_detail,
+                ];
 
-            $json = [
-                'data' => view('pembelian/pemesanan/show', $data),
-            ];
+                $json = [
+                    'data' => view('pembelian/pemesanan/show', $data),
+                ];
+            } else {
+                $json = [];
+            }
 
             echo json_encode($json);
         } else {
