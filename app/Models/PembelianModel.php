@@ -16,6 +16,7 @@ class PembelianModel extends Model
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = [
+        'id_pemesanan',
         'id_supplier',
         'id_user',
         'id_gudang',

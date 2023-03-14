@@ -5,32 +5,30 @@ foreach ($produk_pembelian as $pr) : ?>
         <td><?= $no++ ?></td>
         <td><?= $pr['sku'] ?></td>
         <td><?= $pr['produk'] ?></td>
+        <input id="id_produk_<?= $pr['id'] ?>" type="hidden" value="<?= $pr['id'] ?>">
+        <td>
+            <div hidden class="input-group" id="input_new_harga_satuan_<?= $pr['id'] ?>">
+                <span class="input-group-text py-1 px-2" id="basic-addon1">Rp. </span>
+                <input id="new_harga_satuan_<?= $pr['id'] ?>" type="text" class="form-control py-1 px-2 harga_satuan" value="<?= number_format($pr['harga_satuan'], 0, ',', '.') ?>">
+            </div>
+            <div id="text_harga_satuan_<?= $pr['id'] ?>">Rp. <?= number_format($pr['harga_satuan'], 0, ',', '.') ?></div>
+        </td>
+        <td>
+            <input hidden id="new_qty_<?= $pr['id'] ?>" type="number" class="form-control py-1 px-3" value="<?= $pr['qty'] ?>">
+            <div id="text_qty_<?= $pr['id'] ?>"><?= $pr['qty'] ?></div>
+        </td>
+        <td>Rp. <?= number_format($pr['total_harga'], 0, ',', '.') ?></td>
+        <td class="text-center">
 
-        <form action="<?= base_url() ?>update_produk_pembelian" method="post">
-            <input type="hidden" name="id_produk" value="<?= $pr['id'] ?>">
-            <input type="hidden" name="id_pmb" value="<?= $pembelian['id'] ?>">
-            <td>
-                <div class="input-group">
-                    <span class="input-group-text py-1 px-2" id="basic-addon1">Rp. </span>
-                    <input name="new_harga_satuan" type="text" class="form-control py-1 px-2" value="<?= number_format($pr['harga_satuan'], 0, ',', '.') ?>">
-                </div>
-            </td>
-            <td>
-                <input name="new_qty" type="number" class="form-control py-1 px-3" value="<?= $pr['qty'] ?>">
-            </td>
+            <button hidden id="tombol_update_produk_<?= $pr['id'] ?>" onclick="update(<?= $pr['id'] ?>)" title="Update" type="button" class="px-2 py-0 btn btn-sm btn-outline-success"><i class="fa-fw fa-solid fa-check"></i></button>
+            <button id="tombol_edit_produk_<?= $pr['id'] ?>" onclick="edit(<?= $pr['id'] ?>)" title="Edit" type="button" class="px-2 py-0 btn btn-sm btn-outline-primary"><i class="fa-fw fa-solid fa-pencil"></i></button>
 
-            <td>Rp. <?= number_format($pr['total_harga'], 0, ',', '.') ?></td>
-            <td class="text-center">
-
-                <button title="Update" type="submit" class="px-2 py-0 btn btn-sm btn-outline-primary"><i class="fa-fw fa-solid fa-check"></i></button>
-        </form>
-
-        <form id="form_delete" method="POST" class="d-inline">
-            <?= csrf_field() ?>
-            <input type="hidden" name="_method" value="DELETE">
-            <input type="hidden" name="id_pembelian" value="<?= $pr['id_pembelian'] ?>">
-        </form>
-        <button onclick="confirm_delete(<?= $pr['id'] ?>)" title="Hapus" type="button" class="px-2 py-0 btn btn-sm btn-outline-danger"><i class="fa-fw fa-solid fa-xmark"></i></button>
+            <form id="form_delete" method="POST" class="d-inline">
+                <?= csrf_field() ?>
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="id_pembelian" value="<?= $pr['id_pembelian'] ?>">
+            </form>
+            <button onclick="confirm_delete(<?= $pr['id'] ?>)" title="Hapus" type="button" class="px-2 py-0 btn btn-sm btn-outline-danger"><i class="fa-fw fa-solid fa-xmark"></i></button>
 
         </td>
     </tr>
@@ -41,6 +39,12 @@ foreach ($produk_pembelian as $pr) : ?>
 </tr>
 
 <script>
+    $(document).ready(function() {
+        $('.harga_satuan').mask('000.000.000', {
+            reverse: true
+        });
+    })
+
     function confirm_delete(id) {
         Swal.fire({
             title: 'Konfirmasi?',
@@ -56,5 +60,49 @@ foreach ($produk_pembelian as $pr) : ?>
                 $('#form_delete').submit();
             }
         })
+    }
+
+    function edit(id) {
+        $('#input_new_harga_satuan_' + id).attr('hidden', false);
+        $('#new_qty_' + id).attr('hidden', false);
+        $('#tombol_update_produk_' + id).attr('hidden', false);
+        $('#text_harga_satuan_' + id).attr('hidden', true);
+        $('#text_qty_' + id).attr('hidden', true);
+        $('#tombol_edit_produk_' + id).attr('hidden', true);
+    }
+
+    function update(id) {
+        $.ajax({
+            url: "<?= base_url() ?>pembelian_detail/" + id,
+            type: 'PUT',
+            data: JSON.stringify({
+                id_pembelian: '<?= $pembelian['id'] ?>',
+                new_harga_satuan: $('#new_harga_satuan_' + id).val(),
+                new_qty: $('#new_qty_' + id).val()
+            }),
+            contentType: 'application/json',
+            success: function(response) {
+                if (response) {
+                    Swal.fire(
+                        'Berhasil',
+                        'Berhasil mengupdate list produk pembelian',
+                        'success'
+                    )
+                    load_list();
+                    $('#input_new_harga_satuan_' + id).attr('hidden', true);
+                    $('#new_qty_' + id).attr('hidden', true);
+                    $('#tombol_update_produk_' + id).attr('hidden', true);
+                    $('#text_harga_satuan_' + id).attr('hidden', false);
+                    $('#text_qty_' + id).attr('hidden', false);
+                    $('#tombol_edit_produk' + id).attr('hidden', false);
+                } else {
+                    alert('terjadi error update list produk')
+                    console.log(response)
+                }
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + errorThrown);
+            }
+        });
     }
 </script>

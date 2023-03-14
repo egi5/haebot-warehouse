@@ -175,7 +175,7 @@
         if (id_produk != '' && qty != '') {
             $.ajax({
                 type: "post",
-                url: "<?= base_url() ?>/create_list_produk",
+                url: "<?= base_url() ?>/pemesanan_detail",
                 data: 'id_pemesanan=' + id_pemesanan +
                     '&id_produk=' + id_produk +
                     '&qty=' + qty,

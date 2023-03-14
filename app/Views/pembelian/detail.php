@@ -113,7 +113,7 @@
             <div class="card mb-3">
                 <div class="card-body" style="background-color: #E6ECF0;">
                     <div class="d-grid gap-2">
-                        <button class="btn btn-success" id="simpan_pembelian">Simpan Pembelian <i class="fa-solid fa-floppy-disk"></i></button>
+                        <button class="btn btn-success" id="btn_simpan_pembelian">Simpan Pembelian <i class="fa-solid fa-floppy-disk"></i></button>
                     </div>
                 </div>
             </div>
@@ -166,7 +166,7 @@
         if (id_produk != '' && qty != '') {
             $.ajax({
                 type: "post",
-                url: "<?= base_url() ?>/create_produk_pembelian",
+                url: "<?= base_url() ?>/pembelian_detail",
                 data: 'id_pembelian=' + id_pembelian +
                     '&id_produk=' + id_produk +
                     '&qty=' + qty,
@@ -198,7 +198,7 @@
         }
     })
 
-    $('#simpan_pembelian').click(function() {
+    $('#btn_simpan_pembelian').click(function() {
         let id_pembelian = '<?= $pembelian['id'] ?>'
         $.ajax({
             type: "post",

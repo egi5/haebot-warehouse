@@ -25,7 +25,8 @@ class Pemesanan extends ResourcePresenter
             $data =  $db->table('pemesanan')
                 ->select('pemesanan.id, pemesanan.no_pemesanan, pemesanan.tanggal, supplier.nama as supplier, pemesanan.total_harga_produk, pemesanan.status')
                 ->join('supplier', 'pemesanan.id_supplier = supplier.id', 'left')
-                ->where('pemesanan.deleted_at', null);
+                ->where('pemesanan.deleted_at', null)
+                ->orderBy('pemesanan.id', 'desc');
 
             return DataTable::of($data)
                 ->addNumbering('no')

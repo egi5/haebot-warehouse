@@ -27,7 +27,8 @@ class Pembelian extends ResourcePresenter
             $data =  $db->table('pembelian')
                 ->select('pembelian.id, pembelian.no_pembelian, pembelian.tanggal, supplier.nama as supplier, pembelian.total_harga_produk, pembelian.status')
                 ->join('supplier', 'pembelian.id_supplier = supplier.id', 'left')
-                ->where('pembelian.deleted_at', null);
+                ->where('pembelian.deleted_at', null)
+                ->orderBy('pembelian.id', 'desc');
 
             return DataTable::of($data)
                 ->addNumbering('no')
@@ -97,6 +98,28 @@ class Pembelian extends ResourcePresenter
     }
 
 
+    public function check_pembelian()
+    {
+        $modelPembelian = new PembelianModel();
+        $modelPemesanan = new PemesananModel();
+
+        $no_pemesanan = $this->request->getVar('no_pemesanan');
+        $pemesanan = $modelPemesanan->getPemesanan($no_pemesanan);
+
+        if ($pemesanan) {
+            $pembelian = $modelPembelian->where(['id_pemesanan' => $pemesanan['id']])->findAll();
+            if ($pembelian) {
+                $json = ['pemesanan_already_exist' => 'exist'];
+            } else {
+                $json = ['ok' => 'ok'];
+            }
+        } else {
+            $json = ['not_found_pemesanan' => 'not_found_pemesanan'];
+        }
+        echo json_encode($json);
+    }
+
+
     public function create()
     {
         $validasi = [
@@ -123,13 +146,14 @@ class Pembelian extends ResourcePresenter
         $no_pembelian = nomor_pembelian_auto(date('Y-m-d'));
 
         $data = [
-            'id_pemesanan'      => $pemesanan['id'],
-            'id_supplier'       => $pemesanan['id_supplier'],
-            'id_user'           => $pemesanan['id_user'],
-            'no_pembelian'      => $no_pembelian,
-            'tanggal'           => date('Y-m-d'),
-            'origin'            => $pemesanan['origin'],
-            'status'            => 'Diproses',
+            'id_pemesanan'          => $pemesanan['id'],
+            'id_supplier'           => $pemesanan['id_supplier'],
+            'id_user'               => $pemesanan['id_user'],
+            'no_pembelian'          => $no_pembelian,
+            'tanggal'               => date('Y-m-d'),
+            'origin'                => $pemesanan['origin'],
+            'total_harga_produk'    => $pemesanan['total_harga_produk'],
+            'status'                => 'Diproses',
         ];
         $modelPembelian->save($data);
         $id_pembelian = $modelPembelian->getInsertID();

@@ -162,6 +162,7 @@
                 if (res.data) {
                     $('#isiForm').html(res.data)
                     $('#my-modal').modal('toggle')
+                    $('#cari_no_pemesanan').focus();
                 }
             },
             error: function(e) {

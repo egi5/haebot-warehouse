@@ -94,8 +94,8 @@ class Pembelian_detail extends ResourcePresenter
                 'id_pembelian'          => $id_pembelian,
                 'id_produk'             => $this->request->getPost('id_produk'),
                 'qty'                   => $cek_produk['qty'] + $this->request->getPost('qty'),
-                'harga_satuan'          => $produk['harga_beli'],
-                'total_harga'           => $cek_produk['total_harga'] + ($produk['harga_beli'] * $this->request->getPost('qty')),
+                'harga_satuan'          => $cek_produk['harga_satuan'],
+                'total_harga'           => $cek_produk['total_harga'] + ($cek_produk['harga_satuan'] * $this->request->getPost('qty')),
             ];
             $modelPembelianDetail->save($data_update);
         } else {
@@ -134,32 +134,32 @@ class Pembelian_detail extends ResourcePresenter
 
     public function update($id = null)
     {
-        $asd = [
-            'id_produk' => $this->request->getVar('id_produk'),
-            'id_pmb' => $this->request->getVar('id_pmb'),
-            'new_harga_satuan' => $this->request->getVar('new_harga_satuan'),
-            'new_qty' => $this->request->getVar('new_qty'),
+
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        $modelPembelianDetail = new PembelianDetailModel();
+        $harga_satuan = str_replace(".", "", $data['new_harga_satuan']);
+        $data_update_produk = [
+            'id'                    => $id,
+            'qty'                   => $data['new_qty'],
+            'harga_satuan'          => $harga_satuan,
+            'total_harga'           => $harga_satuan * $data['new_qty'],
         ];
-        dd($asd);
-        // $modelPembelianDetail = new PembelianDetailModel();
-        // $cek_produk = $modelPembelianDetail->where(['id_produk' => $id_produk, 'id_pembelian' => $id_pembelian])->first();
+        $modelPembelianDetail->save($data_update_produk);
 
-        // $data_update = [
-        //     'id'                    => $cek_produk['id'],
-        //     'qty'                   => $cek_produk['qty'] + $this->request->getPost('qty'),
-        //     'harga_satuan'          => $produk['harga_beli'],
-        //     'total_harga'           => $cek_produk['total_harga'] + ($produk['harga_beli'] * $this->request->getPost('qty')),
-        // ];
-        // $modelPembelianDetail->save($data_update);
+        $modelPembelian = new PembelianModel();
+        $sum = $modelPembelianDetail->sumTotalHargaProduk($data['id_pembelian']);
+        $data_update_pembelian = [
+            'id'                    => $data['id_pembelian'],
+            'total_harga_produk'    => $sum['total_harga'],
+        ];
+        $modelPembelian->save($data_update_pembelian);
 
-        // $modelPembelian = new PembelianModel();
-        // $sum = $modelPembelianDetail->sumTotalHargaProduk($id_pembelian);
+        $json = [
+            'notif' => 'Berhasil update list produk pembelian',
+        ];
 
-        // $data_update = [
-        //     'id'                    => $id_pembelian,
-        //     'total_harga_produk'    => $sum['total_harga'],
-        // ];
-        // $modelPembelian->save($data_update);
+        echo json_encode($json);
     }
 
 
@@ -210,7 +210,7 @@ class Pembelian_detail extends ResourcePresenter
 
 
 
-    public function kirim_pembelian()
+    public function simpan_pembelian()
     {
         $id_pembelian = $this->request->getVar('id_pembelian');
 
