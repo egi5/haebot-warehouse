@@ -2,14 +2,13 @@
 
 namespace App\Controllers;
 
-use App\Models\PemesananDetailModel;
-use App\Models\PemesananModel;
+use App\Models\GudangModel;
+use App\Models\PembelianDetailModel;
+use App\Models\PembelianModel;
 use App\Models\ProdukModel;
-use App\Models\SupplierModel;
-use App\Models\UserModel;
 use CodeIgniter\RESTful\ResourcePresenter;
 
-class Pemesanan_detail extends ResourcePresenter
+class Pembelian_detail extends ResourcePresenter
 {
     protected $helpers = ['user_admin_helper'];
 
@@ -18,41 +17,42 @@ class Pemesanan_detail extends ResourcePresenter
     }
 
 
-    public function List_pemesanan($no_pemesanan)
+    public function List_pembelian($no_pembelian)
     {
-        $modelSupplier = new SupplierModel();
-        $supplier = $modelSupplier->findAll();
         $modelProduk = new ProdukModel();
         $produk = $modelProduk->findAll();
-        $modelUser = new UserModel();
-        $user = $modelUser->getAllUserWithKaryawanName();
+        $modelGudang = new GudangModel();
+        $gudang = $modelGudang->findAll();
 
-        $pemesananModel = new PemesananModel();
+        $pembelianModel = new PembelianModel();
         $data = [
-            'pemesanan'             => $pemesananModel->getPemesanan($no_pemesanan),
-            'supplier'              => $supplier,
+            'pembelian'             => $pembelianModel->getPembelian($no_pembelian),
             'produk'                => $produk,
-            'user'                  => $user
+            'gudang'                => $gudang,
         ];
-        return view('pembelian/pemesanan/detail', $data);
+        return view('pembelian/detail', $data);
     }
 
-    public function getListProdukPemesanan()
+
+    public function getListProdukPembelian()
     {
         if ($this->request->isAJAX()) {
 
-            $id_pemesanan = $this->request->getVar('id_pemesanan');
+            $modelPembelian = new PembelianModel();
+            $modelPembelianDetail = new PembelianDetailModel();
 
-            $modelPemesananDetail = new PemesananDetailModel();
-            $produk_pemesanan = $modelPemesananDetail->getListProdukPemesanan($id_pemesanan);
+            $id_pembelian = $this->request->getVar('id_pembelian');
+            $pembelian = $modelPembelian->find($id_pembelian);
+            $produk_pembelian = $modelPembelianDetail->getListProdukPembelian($id_pembelian);
 
-            if ($produk_pemesanan) {
+            if ($produk_pembelian) {
                 $data = [
-                    'produk_pemesanan'      => $produk_pemesanan,
+                    'produk_pembelian'      => $produk_pembelian,
+                    'pembelian'             => $pembelian
                 ];
 
                 $json = [
-                    'list' => view('pembelian/pemesanan/list_produk', $data),
+                    'list' => view('pembelian/list_produk', $data),
                 ];
             } else {
                 $json = [
@@ -80,37 +80,46 @@ class Pemesanan_detail extends ResourcePresenter
     public function create()
     {
         $id_produk = $this->request->getPost('id_produk');
-        $id_pemesanan = $this->request->getPost('id_pemesanan');
+        $id_pembelian = $this->request->getPost('id_pembelian');
 
         $modelProduk = new ProdukModel();
         $produk = $modelProduk->find($id_produk);
 
-        $modelPemesananDetail = new PemesananDetailModel();
-        $cek_produk = $modelPemesananDetail->where(['id_produk' => $id_produk, 'id_pemesanan' => $id_pemesanan])->first();
+        $modelPembelianDetail = new PembelianDetailModel();
+        $cek_produk = $modelPembelianDetail->where(['id_produk' => $id_produk, 'id_pembelian' => $id_pembelian])->first();
 
         if ($cek_produk) {
             $data_update = [
                 'id'                    => $cek_produk['id'],
-                'id_pemesanan'          => $id_pemesanan,
+                'id_pembelian'          => $id_pembelian,
                 'id_produk'             => $this->request->getPost('id_produk'),
                 'qty'                   => $cek_produk['qty'] + $this->request->getPost('qty'),
                 'harga_satuan'          => $produk['harga_beli'],
                 'total_harga'           => $cek_produk['total_harga'] + ($produk['harga_beli'] * $this->request->getPost('qty')),
             ];
-            $modelPemesananDetail->save($data_update);
+            $modelPembelianDetail->save($data_update);
         } else {
             $data = [
-                'id_pemesanan'          => $id_pemesanan,
+                'id_pembelian'          => $id_pembelian,
                 'id_produk'             => $this->request->getPost('id_produk'),
                 'qty'                   => $this->request->getPost('qty'),
                 'harga_satuan'          => $produk['harga_beli'],
                 'total_harga'           => ($produk['harga_beli'] * $this->request->getPost('qty')),
             ];
-            $modelPemesananDetail->save($data);
+            $modelPembelianDetail->save($data);
         }
 
+        $modelPembelian = new PembelianModel();
+        $sum = $modelPembelianDetail->sumTotalHargaProduk($id_pembelian);
+
+        $data_update = [
+            'id'                    => $id_pembelian,
+            'total_harga_produk'    => $sum['total_harga'],
+        ];
+        $modelPembelian->save($data_update);
+
         $json = [
-            'notif' => 'Berhasil menambah list produk pemesanan',
+            'notif' => 'Berhasil menambah list produk pembelian',
         ];
 
         echo json_encode($json);
@@ -125,7 +134,32 @@ class Pemesanan_detail extends ResourcePresenter
 
     public function update($id = null)
     {
-        //
+        $asd = [
+            'id_produk' => $this->request->getVar('id_produk'),
+            'id_pmb' => $this->request->getVar('id_pmb'),
+            'new_harga_satuan' => $this->request->getVar('new_harga_satuan'),
+            'new_qty' => $this->request->getVar('new_qty'),
+        ];
+        dd($asd);
+        // $modelPembelianDetail = new PembelianDetailModel();
+        // $cek_produk = $modelPembelianDetail->where(['id_produk' => $id_produk, 'id_pembelian' => $id_pembelian])->first();
+
+        // $data_update = [
+        //     'id'                    => $cek_produk['id'],
+        //     'qty'                   => $cek_produk['qty'] + $this->request->getPost('qty'),
+        //     'harga_satuan'          => $produk['harga_beli'],
+        //     'total_harga'           => $cek_produk['total_harga'] + ($produk['harga_beli'] * $this->request->getPost('qty')),
+        // ];
+        // $modelPembelianDetail->save($data_update);
+
+        // $modelPembelian = new PembelianModel();
+        // $sum = $modelPembelianDetail->sumTotalHargaProduk($id_pembelian);
+
+        // $data_update = [
+        //     'id'                    => $id_pembelian,
+        //     'total_harga_produk'    => $sum['total_harga'],
+        // ];
+        // $modelPembelian->save($data_update);
     }
 
 
@@ -137,25 +171,34 @@ class Pemesanan_detail extends ResourcePresenter
 
     public function delete($id = null)
     {
-        $id_pemesanan = $this->request->getPost('id_pemesanan');
-        $modelPemesanan = new PemesananModel();
-        $no_pemesanan = $modelPemesanan->find($id_pemesanan)['no_pemesanan'];
+        $id_pembelian = $this->request->getPost('id_pembelian');
+        $modelPembelian = new PembelianModel();
+        $no_pembelian = $modelPembelian->find($id_pembelian)['no_pembelian'];
 
-        $modelPemesananDetail = new PemesananDetailModel();
+        $modelPembelianDetail = new PembelianDetailModel();
 
-        $modelPemesananDetail->delete($id);
+        $modelPembelianDetail->delete($id);
+
+        $modelPembelian = new PembelianModel();
+        $sum = $modelPembelianDetail->sumTotalHargaProduk($id_pembelian);
+
+        $data_update = [
+            'id'                    => $id_pembelian,
+            'total_harga_produk'    => $sum['total_harga'],
+        ];
+        $modelPembelian->save($data_update);
 
         session()->setFlashdata('pesan', 'Data berhasil dihapus.');
-        return redirect()->to('/list_pemesanan/' . $no_pemesanan);
+        return redirect()->to('/list_pembelian/' . $no_pembelian);
     }
 
 
 
-    public function check_list_produk()
+    public function check_produk_pembelian()
     {
-        $id_pemesanan = $this->request->getVar('id_pemesanan');
-        $modelPemesananDetail = new PemesananDetailModel();
-        $produk = $modelPemesananDetail->where(['id_pemesanan' => $id_pemesanan])->findAll();
+        $id_pembelian = $this->request->getVar('id_pembelian');
+        $modelPembelianDetail = new PembelianDetailModel();
+        $produk = $modelPembelianDetail->where(['id_pembelian' => $id_pembelian])->findAll();
 
         if ($produk) {
             $json = ['ok' => 'ok'];
@@ -167,26 +210,26 @@ class Pemesanan_detail extends ResourcePresenter
 
 
 
-    public function kirim_pemesanan()
+    public function kirim_pembelian()
     {
-        $id_pemesanan = $this->request->getVar('id_pemesanan');
+        $id_pembelian = $this->request->getVar('id_pembelian');
 
-        $modelPemesanan = new PemesananModel();
-        $pemesanan = $modelPemesanan->find($id_pemesanan);
+        $modelPembelian = new PembelianModel();
+        $pembelian = $modelPembelian->find($id_pembelian);
 
-        $modelPemesananDetail = new PemesananDetailModel();
-        $sum = $modelPemesananDetail->sumTotalHargaProduk($id_pemesanan);
+        $modelPembelianDetail = new PembelianDetailModel();
+        $sum = $modelPembelianDetail->sumTotalHargaProduk($id_pembelian);
 
         $data_update = [
-            'id'                    => $pemesanan['id'],
+            'id'                    => $pembelian['id'],
             'id_supplier'           => $this->request->getVar('id_supplier'),
             'id_user'               => $this->request->getVar('id_user'),
             'total_harga_produk'    => $sum['total_harga'],
             'status'                => 'Ordered'
         ];
-        $modelPemesanan->save($data_update);
+        $modelPembelian->save($data_update);
 
-        session()->setFlashdata('pesan', 'Status pemesanan berhasil diupdate ke Ordered.');
-        return redirect()->to('/pemesanan');
+        session()->setFlashdata('pesan', 'Status pembelian berhasil diupdate ke Ordered.');
+        return redirect()->to('/pembelian');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\PembelianDetailModel;
 use App\Models\PembelianModel;
+use App\Models\PemesananDetailModel;
 use App\Models\PemesananModel;
 use App\Models\SupplierModel;
 use CodeIgniter\RESTful\ResourcePresenter;
@@ -15,7 +16,7 @@ class Pembelian extends ResourcePresenter
 
     public function index()
     {
-        return view('pembelian/pembelian/index');
+        return view('pembelian/index');
     }
 
 
@@ -71,7 +72,7 @@ class Pembelian extends ResourcePresenter
             ];
 
             $json = [
-                'data' => view('pembelian/pembelian/show', $data),
+                'data' => view('pembelian/show', $data),
             ];
 
             echo json_encode($json);
@@ -86,7 +87,7 @@ class Pembelian extends ResourcePresenter
         if ($this->request->isAJAX()) {
 
             $json = [
-                'data' => view('pembelian/pembelian/add'),
+                'data' => view('pembelian/add'),
             ];
 
             echo json_encode($json);
@@ -103,37 +104,49 @@ class Pembelian extends ResourcePresenter
                 'rules' => 'required',
                 'errors' => [
                     'required' => 'Nomor pemesanan harus diisi.',
-                    'is_unique' => 'Nomor pemesanan sudah ada dalam database.'
                 ]
             ],
         ];
-
-
 
         if (!$this->validate($validasi)) {
             session()->setFlashdata('pesan', 'Maaf, terjadi error dengan no pemesanan.');
             return redirect()->to('/pembelian');
         }
 
-        date_default_timezone_set('Asia/Jakarta');
-
+        $modelPembelian = new PembelianModel();
         $modelPemesanan = new PemesananModel();
+        $modelPembelianDetail = new PembelianDetailModel();
+        $modelPemesananDetail = new PemesananDetailModel();
         $pemesanan = $modelPemesanan->getPemesanan($this->request->getPost('no_pemesanan'));
 
-        $modelPembelian = new PembelianModel();
+        date_default_timezone_set('Asia/Jakarta');
+        $no_pembelian = nomor_pembelian_auto(date('Y-m-d'));
+
         $data = [
             'id_pemesanan'      => $pemesanan['id'],
             'id_supplier'       => $pemesanan['id_supplier'],
             'id_user'           => $pemesanan['id_user'],
-            'no_pembelian'      => nomor_pembelian_auto(date('Y-m-d')),
+            'no_pembelian'      => $no_pembelian,
             'tanggal'           => date('Y-m-d'),
             'origin'            => $pemesanan['origin'],
             'status'            => 'Diproses',
         ];
-        dd($data);
-        // $modelPembelian->save($data);
+        $modelPembelian->save($data);
+        $id_pembelian = $modelPembelian->getInsertID();
 
-        return redirect()->to('/ekspedisi');
+        $listProdukPemesanan = $modelPemesananDetail->where(['id_pemesanan' => $pemesanan['id']])->findAll();
+        foreach ($listProdukPemesanan as $produk) {
+            $data_produk = [
+                'id_pembelian'          => $id_pembelian,
+                'id_produk'             => $produk['id'],
+                'qty'                   => $produk['qty'],
+                'harga_satuan'          => $produk['harga_satuan'],
+                'total_harga'           => $produk['total_harga'],
+            ];
+            $modelPembelianDetail->save($data_produk);
+        }
+
+        return redirect()->to('/list_pembelian/' . $no_pembelian);
     }
 
 

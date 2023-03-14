@@ -14,7 +14,7 @@ class Pemesanan extends ResourcePresenter
 
     public function index()
     {
-        return view('pembelian/pemesanan/index');
+        return view('pemesanan/index');
     }
 
 
@@ -63,17 +63,21 @@ class Pemesanan extends ResourcePresenter
             $pemesanan = $modelPemesanan->getPemesanan($no);
 
             if ($pemesanan) {
-                $modelPemesananDetail = new PemesananDetailModel();
-                $pemesanan_detail = $modelPemesananDetail->getListProdukPemesanan($pemesanan['id']);
+                if ($pemesanan['status'] == 'Pending') {
+                    $json = ['error' => 'Belum di kirim ke supplier.'];
+                } else {
+                    $modelPemesananDetail = new PemesananDetailModel();
+                    $pemesanan_detail = $modelPemesananDetail->getListProdukPemesanan($pemesanan['id']);
 
-                $data = [
-                    'pemesanan' => $pemesanan,
-                    'pemesanan_detail' => $pemesanan_detail,
-                ];
+                    $data = [
+                        'pemesanan' => $pemesanan,
+                        'pemesanan_detail' => $pemesanan_detail,
+                    ];
 
-                $json = [
-                    'data' => view('pembelian/pemesanan/show', $data),
-                ];
+                    $json = [
+                        'data' => view('pemesanan/show', $data),
+                    ];
+                }
             } else {
                 $json = [];
             }
@@ -98,7 +102,7 @@ class Pemesanan extends ResourcePresenter
             ];
 
             $json = [
-                'data' => view('pembelian/pemesanan/add', $data),
+                'data' => view('pemesanan/add', $data),
             ];
 
             echo json_encode($json);

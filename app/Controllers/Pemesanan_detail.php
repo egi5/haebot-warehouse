@@ -34,7 +34,7 @@ class Pemesanan_detail extends ResourcePresenter
             'produk'                => $produk,
             'user'                  => $user
         ];
-        return view('pembelian/pemesanan/detail', $data);
+        return view('pemesanan/detail', $data);
     }
 
     public function getListProdukPemesanan()
@@ -52,7 +52,7 @@ class Pemesanan_detail extends ResourcePresenter
                 ];
 
                 $json = [
-                    'list' => view('pembelian/pemesanan/list_produk', $data),
+                    'list' => view('pemesanan/list_produk', $data),
                 ];
             } else {
                 $json = [

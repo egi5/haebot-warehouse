@@ -7,10 +7,10 @@
 
     <div class="d-flex mb-0">
         <div class="me-auto mb-1">
-            <h3 style="color: #566573;">Buat List Produk Pemesanan</h3>
+            <h3 style="color: #566573;">Fix List Produk Pembelian</h3>
         </div>
         <div class="me-2 mb-1">
-            <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>pemesanan">
+            <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>pembelian">
                 <i class="fa-fw fa-solid fa-arrow-left"></i> Kembali
             </a>
         </div>
@@ -45,12 +45,12 @@
                             <thead>
                                 <tr>
                                     <th class="text-center" width="5%">#</th>
-                                    <th class="text-center" width="15%">SKU</th>
+                                    <th class="text-center" width="10%">SKU</th>
                                     <th class="text-center" width="30%">Produk</th>
                                     <th class="text-center" width="20%">Satuan</th>
-                                    <th class="text-center" width="5%">Qty</th>
-                                    <th class="text-center" width="20%">Total</th>
-                                    <th class="text-center" width="5%">Aksi</th>
+                                    <th class="text-center" width="10%">Qty</th>
+                                    <th class="text-center" width="15%">Total</th>
+                                    <th class="text-center" width="10%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="tabel_list_produk">
@@ -66,51 +66,54 @@
 
             <div class="card mb-3">
                 <div class="card-header text-light" style="background-color: #3A98B9;">
-                    Detail Pemesanan
+                    Detail Pembelian
                 </div>
                 <div class="card-body" style="background-color: #E6ECF0;">
-                    <form id="form_pemesanan" autocomplete="off" action="<?= site_url() ?>kirim_pemesanan" method="post">
-                        <input type="hidden" name="id_pemesanan" value="<?= $pemesanan['id'] ?>">
+
+                    <div class="mb-2">Nomor Pembelian : <b><?= $pembelian['no_pembelian'] ?></b></div>
+                    <div class="mb-2">Supplier : <b><?= $pembelian['supplier'] ?></b></div>
+                    <div class="mb-2">Tanggal : <b><?= $pembelian['tanggal'] ?></b></div>
+                    <div class="mb-2">Admin : <b><?= user()->name ?></b></div>
+
+                    <hr>
+
+                    <form id="form_pembelian" autocomplete="off" action="<?= site_url() ?>simpan_pembelian" method="post">
+                        <input type="hidden" name="id_pembelian" value="<?= $pembelian['id'] ?>">
+
                         <div class="mb-3">
-                            <label for="no_pemesanan" class="form-label">Nomor Pemesanan</label>
-                            <input disabled type="text" class="form-control" id="no_pemesanan" name="no_pemesanan" value="<?= $pemesanan['no_pemesanan'] ?>">
-                        </div>
-                        <div class="mb-3">
-                            <label for="supplier" class="form-label">Supplier</label>
-                            <select disabled class="form-select" id="supplier" name="supplier">
+                            <label for="gudang" class="form-label">Diterima Gudang</label>
+                            <select class="form-select" id="gudang" name="gudang">
                                 <option value=""></option>
-                                <?php foreach ($supplier as $sup) : ?>
-                                    <option <?= ($sup['id'] == $pemesanan['id_supplier']) ? 'selected' : '' ?> value="<?= $sup['id'] ?>"><?= $sup['nama'] ?></option>
+                                <?php foreach ($gudang as $gud) : ?>
+                                    <option <?= ($gud['id'] == $pembelian['id_gudang']) ? 'selected' : '' ?> value="<?= $gud['id'] ?>"><?= $gud['nama'] ?></option>
                                 <?php endforeach ?>
                             </select>
-                            <input type="hidden" name="id_supplier" id="id_supplier">
                         </div>
                         <div class="mb-3">
-                            <label for="tanggal" class="form-label">Tanggal</label>
-                            <input disabled type="text" class="form-control" id="tanggal" name="tanggal" value="<?= $pemesanan['tanggal'] ?>">
+                            <label class="form-label">Dimensi</label>
+                            <input type="text" class="form-control" id="dimensi" name="dimensi">
                         </div>
                         <div class="mb-3">
-                            <label for="user" class="form-label">Admin</label>
-                            <select disabled class="form-select" id="user" name="user">
-                                <option value=""></option>
-                                <?php foreach ($user as $usr) : ?>
-                                    <option <?= ($usr['id'] == user()->id) ? 'selected' : '' ?> value="<?= $usr['id'] ?>"><?= $usr['nama'] ?></option>
-                                <?php endforeach ?>
-                            </select>
-                            <input type="hidden" name="id_user" id="id_user">
+                            <label class="form-label">Berat</label>
+                            <input type="text" class="form-control" id="berat" name="berat">
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Carton / Koli</label>
+                            <input type="text" class="form-control" id="carton_koli" name="carton_koli">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Catatan</label>
+                            <input type="text" class="form-control" id="catatan" name="catatan">
+                        </div>
+
                     </form>
                 </div>
             </div>
 
             <div class="card mb-3">
                 <div class="card-body" style="background-color: #E6ECF0;">
-                    <a class="d-grid gap-2 text-decoration-none" href="<?= site_url() ?>pemesanan">
-                        <button class="btn btn-success" id="simpan_pemesanan">Simpan Pemesanan <i class="fa-solid fa-floppy-disk"></i></button>
-                    </a>
-                    <br>
                     <div class="d-grid gap-2">
-                        <button class="btn btn-danger" id="kirim_pemesanan">Kirim Pemesanan <i class="fa-solid fa-arrow-right"></i></button>
+                        <button class="btn btn-success" id="simpan_pembelian">Simpan Pembelian <i class="fa-solid fa-floppy-disk"></i></button>
                     </div>
                 </div>
             </div>
@@ -131,27 +134,20 @@
             placeholder: 'Cari Produk',
             initSelection: function(element, callback) {}
         });
-        $("#supplier").select2({
-            theme: "bootstrap-5",
-        });
-        $("#user").select2({
-            theme: "bootstrap-5",
-        });
 
         $('#tanggal').datepicker({
             format: "yyyy-mm-dd"
         });
 
         load_list();
-        set_value_select2();
     })
 
     function load_list() {
-        let id_pemesanan = '<?= $pemesanan['id'] ?>'
+        let id_pembelian = '<?= $pembelian['id'] ?>'
         $.ajax({
             type: "post",
-            url: "<?= base_url() ?>/produks_pemesanan",
-            data: 'id_pemesanan=' + id_pemesanan,
+            url: "<?= base_url() ?>/produks_pembelian",
+            data: 'id_pembelian=' + id_pembelian,
             dataType: "json",
             success: function(response) {
                 $('#tabel_list_produk').html(response.list)
@@ -162,21 +158,16 @@
         });
     }
 
-    function set_value_select2() {
-        $('#id_supplier').val($('#supplier').val());
-        $('#id_user').val($('#user').val());
-    }
-
     $('#tambah_produk').click(function() {
         let id_produk = $('#id_produk').val();
         let qty = $('#qty').val();
-        let id_pemesanan = '<?= $pemesanan['id'] ?>'
+        let id_pembelian = '<?= $pembelian['id'] ?>'
 
         if (id_produk != '' && qty != '') {
             $.ajax({
                 type: "post",
-                url: "<?= base_url() ?>/create_list_produk",
-                data: 'id_pemesanan=' + id_pemesanan +
+                url: "<?= base_url() ?>/create_produk_pembelian",
+                data: 'id_pembelian=' + id_pembelian +
                     '&id_produk=' + id_produk +
                     '&qty=' + qty,
                 dataType: "json",
@@ -207,18 +198,18 @@
         }
     })
 
-    $('#kirim_pemesanan').click(function() {
-        let id_pemesanan = '<?= $pemesanan['id'] ?>'
+    $('#simpan_pembelian').click(function() {
+        let id_pembelian = '<?= $pembelian['id'] ?>'
         $.ajax({
             type: "post",
-            url: "<?= base_url() ?>/check_list_produk",
-            data: 'id_pemesanan=' + id_pemesanan,
+            url: "<?= base_url() ?>/check_produk_pembelian",
+            data: 'id_pembelian=' + id_pembelian,
             dataType: "json",
             success: function(response) {
                 if (response.ok) {
                     Swal.fire({
                         title: 'Konfirmasi?',
-                        text: "Apakah yakin mengirim pemesanan ini ke supplier?",
+                        text: "Apakah yakin menyimpan pembelian?",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
@@ -226,13 +217,13 @@
                         confirmButtonText: 'Ya, Lanjut!'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            $('#form_pemesanan').submit();
+                            $('#form_pembelian').submit();
                         }
                     })
                 } else {
                     Swal.fire(
                         'Opss.',
-                        'Tidak ada produk dalam pemesanan. pilih minimal satu produk dulu!',
+                        'Tidak ada produk dalam pembelian. pilih minimal satu produk dulu!',
                         'error'
                     )
                 }
