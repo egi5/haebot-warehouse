@@ -56,7 +56,7 @@
                         $('#no_pemesanan').val('')
 
                         $('#cari_no_pemesanan').removeClass('is-valid');
-                        $('.error-cari_no_pemesanan').html('No pemesanan ' + no + ' sudah diproses ke pembelian.');
+                        $('.error-cari_no_pemesanan').html('No pemesanan ' + no + ' sudah diproses ke pembelian, dengan nomor ' + response.no_pembelian);
                         $('#cari_no_pemesanan').addClass('is-invalid');
                     } else if (response.not_found_pemesanan) {
                         Swal.fire(

@@ -6,7 +6,6 @@ use App\Models\PembelianDetailModel;
 use App\Models\PembelianModel;
 use App\Models\PemesananDetailModel;
 use App\Models\PemesananModel;
-use App\Models\SupplierModel;
 use CodeIgniter\RESTful\ResourcePresenter;
 use \Hermawan\DataTables\DataTable;
 
@@ -33,7 +32,7 @@ class Pembelian extends ResourcePresenter
             return DataTable::of($data)
                 ->addNumbering('no')
                 ->add('aksi', function ($row) {
-                    if ($row->status == 'Diproses') {
+                    if ($row->status == 'Belum Fixing') {
                         return '
                     <a title="Edit Pembelian" class="px-2 py-0 btn btn-sm btn-outline-primary" href="' . base_url() . '/list_pembelian/' . $row->no_pembelian . '">
                         <i class="fa-fw fa-solid fa-circle-arrow-right"></i>
@@ -104,12 +103,12 @@ class Pembelian extends ResourcePresenter
         $modelPemesanan = new PemesananModel();
 
         $no_pemesanan = $this->request->getVar('no_pemesanan');
-        $pemesanan = $modelPemesanan->getPemesanan($no_pemesanan);
+        $pemesanan = $modelPemesanan->where(['no_pemesanan' => $no_pemesanan])->first();
 
         if ($pemesanan) {
-            $pembelian = $modelPembelian->where(['id_pemesanan' => $pemesanan['id']])->findAll();
+            $pembelian = $modelPembelian->where(['id_pemesanan' => $pemesanan['id']])->first();
             if ($pembelian) {
-                $json = ['pemesanan_already_exist' => 'exist'];
+                $json = ['pemesanan_already_exist' => 'exist', 'no_pembelian' => $pembelian['no_pembelian']];
             } else {
                 $json = ['ok' => 'ok'];
             }
@@ -153,7 +152,7 @@ class Pembelian extends ResourcePresenter
             'tanggal'               => date('Y-m-d'),
             'origin'                => $pemesanan['origin'],
             'total_harga_produk'    => $pemesanan['total_harga_produk'],
-            'status'                => 'Diproses',
+            'status'                => 'Belum Fixing',
         ];
         $modelPembelian->save($data);
         $id_pembelian = $modelPembelian->getInsertID();
@@ -192,15 +191,15 @@ class Pembelian extends ResourcePresenter
     }
 
 
-    // public function delete($id = null)
-    // {
-    //     $modelPemesananDetail = new PemesananDetailModel();
-    //     $modelPemesananDetail->where(['id_pemesanan' => $id])->delete();
+    public function delete($id = null)
+    {
+        $modelPembelianDetail = new PembelianDetailModel();
+        $modelPembelianDetail->where(['id_pembelian' => $id])->delete();
 
-    //     $modelPemesanan = new PemesananModel();
-    //     $modelPemesanan->delete($id);
+        $modelPembelian = new PembelianModel();
+        $modelPembelian->delete($id);
 
-    //     session()->setFlashdata('pesan', 'Data pemesanan berhasil dihapus.');
-    //     return redirect()->to('/pemesanan');
-    // }
+        session()->setFlashdata('pesan', 'Data pembelian berhasil dihapus.');
+        return redirect()->to('/pembelian');
+    }
 }

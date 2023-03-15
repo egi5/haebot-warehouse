@@ -78,6 +78,11 @@ $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
     $routes->post('produks_pembelian', 'Pembelian_detail::getListProdukPembelian', ['filter' => 'permission:Pembelian']);
     $routes->post('check_produk_pembelian', 'Pembelian_detail::check_produk_pembelian', ['filter' => 'permission:Pembelian']);
     $routes->resource('pembelian_detail', ['filter' => 'permission:Pembelian']);
+
+    // Data Pembelian
+    $routes->get('data_pembelian', 'Data_pembelian::index', ['filter' => 'permission:Pembelian']);
+    $routes->get('get_data_pembelian', 'Data_pembelian::getDataPembelian', ['filter' => 'permission:Pembelian']);
+    $routes->get('show_data_pembelian/(:any)', 'Data_pembelian::show/$1', ['filter' => 'permission:Pembelian']);
 });
 
 /*

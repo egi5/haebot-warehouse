@@ -78,7 +78,10 @@
                     <hr>
 
                     <form id="form_pembelian" autocomplete="off" action="<?= site_url() ?>simpan_pembelian" method="post">
+                        <?= csrf_field() ?>
+
                         <input type="hidden" name="id_pembelian" value="<?= $pembelian['id'] ?>">
+                        <input type="hidden" name="id_admin" value="<?= user()->id ?>">
 
                         <div class="mb-3">
                             <label for="gudang" class="form-label">Diterima Gudang</label>
@@ -199,6 +202,48 @@
     })
 
     $('#btn_simpan_pembelian').click(function() {
+        if ($('#gudang').val() == '') {
+            $('#gudang').removeClass('is-valid');
+            $('#gudang').addClass('is-invalid');
+        } else {
+            $('#gudang').addClass('is-valid');
+            $('#gudang').removeClass('is-invalid');
+        }
+        if ($('#dimensi').val() == '') {
+            $('#dimensi').removeClass('is-valid');
+            $('#dimensi').addClass('is-invalid');
+        } else {
+            $('#dimensi').addClass('is-valid');
+            $('#dimensi').removeClass('is-invalid');
+        }
+        if ($('#berat').val() == '') {
+            $('#berat').removeClass('is-valid');
+            $('#berat').addClass('is-invalid');
+        } else {
+            $('#berat').addClass('is-valid');
+            $('#berat').removeClass('is-invalid');
+        }
+        if ($('#carton_koli').val() == '') {
+            $('#carton_koli').removeClass('is-valid');
+            $('#carton_koli').addClass('is-invalid');
+        } else {
+            $('#carton_koli').addClass('is-valid');
+            $('#carton_koli').removeClass('is-invalid');
+        }
+        if ($('#catatan').val() == '') {
+            $('#catatan').removeClass('is-valid');
+            $('#catatan').addClass('is-invalid');
+        } else {
+            $('#catatan').addClass('is-valid');
+            $('#catatan').removeClass('is-invalid');
+        }
+
+        if ($('#gudang').val() != '' && $('#dimensi').val() != '' && $('#berat').val() != '' && $('#carton_koli').val() != '' && $('#catatan').val() != '') {
+            simpan_pembelian();
+        }
+    })
+
+    function simpan_pembelian() {
         let id_pembelian = '<?= $pembelian['id'] ?>'
         $.ajax({
             type: "post",
@@ -232,7 +277,7 @@
                 alert('Error \n' + e.responseText);
             }
         });
-    })
+    }
 </script>
 
 <?= $this->endSection() ?>

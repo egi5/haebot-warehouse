@@ -212,6 +212,7 @@ class Pembelian_detail extends ResourcePresenter
 
     public function simpan_pembelian()
     {
+        date_default_timezone_set('Asia/Jakarta');
         $id_pembelian = $this->request->getVar('id_pembelian');
 
         $modelPembelian = new PembelianModel();
@@ -222,14 +223,18 @@ class Pembelian_detail extends ResourcePresenter
 
         $data_update = [
             'id'                    => $pembelian['id'],
-            'id_supplier'           => $this->request->getVar('id_supplier'),
-            'id_user'               => $this->request->getVar('id_user'),
+            'id_user'               => $this->request->getVar('id_admin'),
+            'id_gudang'             => $this->request->getVar('gudang'),
             'total_harga_produk'    => $sum['total_harga'],
-            'status'                => 'Ordered'
+            'dimensi'               => $this->request->getVar('dimensi'),
+            'berat'                 => $this->request->getVar('berat'),
+            'carton_koli'           => $this->request->getVar('carton_koli'),
+            'catatan'               => $this->request->getVar('catatan'),
+            'status'                => 'Diproses'
         ];
         $modelPembelian->save($data_update);
 
-        session()->setFlashdata('pesan', 'Status pembelian berhasil diupdate ke Ordered.');
+        session()->setFlashdata('pesan', 'Berhasil membuat tagihan pembelian.');
         return redirect()->to('/pembelian');
     }
 }

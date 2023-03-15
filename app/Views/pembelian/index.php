@@ -9,11 +9,6 @@
         <div class="me-auto mb-1">
             <h3 style="color: #566573;">Fixing Pemesanan dan Buat Pembelian</h3>
         </div>
-        <div class="me-2 mb-1">
-            <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>pembelian">
-                <i class="fa-fw fa-solid fa-arrow-left"></i> Kembali
-            </a>
-        </div>
         <div class="mb-1">
             <a class="btn btn-sm btn-outline-secondary mb-3" id="tombolTambah">
                 <i class="fa-fw fa-solid fa-plus"></i> Buat Pembelian
@@ -170,6 +165,27 @@
             }
         })
     }
+
+
+    function showModalDetail(no) {
+        $.ajax({
+            type: 'GET',
+            url: '<?= site_url() ?>pembelian/' + no,
+            dataType: 'json',
+            success: function(res) {
+                if (res.data) {
+                    $('#isiShow').html(res.data)
+                    $('#my-modal-show').modal('toggle')
+                } else {
+                    console.log(res)
+                }
+            },
+            error: function(e) {
+                alert('Error \n' + e.responseText);
+            }
+        })
+    }
+
 
     function confirm_delete(id) {
         Swal.fire({
