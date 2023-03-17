@@ -13,10 +13,6 @@ class Pemesanan_detail extends ResourcePresenter
 {
     protected $helpers = ['user_admin_helper'];
 
-    public function index()
-    {
-    }
-
 
     public function List_pemesanan($no_pemesanan)
     {
@@ -36,6 +32,7 @@ class Pemesanan_detail extends ResourcePresenter
         ];
         return view('pemesanan/detail', $data);
     }
+
 
     public function getListProdukPemesanan()
     {
@@ -64,16 +61,6 @@ class Pemesanan_detail extends ResourcePresenter
         } else {
             return 'Tidak bisa load';
         }
-    }
-
-
-    public function show($id = null)
-    {
-    }
-
-
-    public function new()
-    {
     }
 
 
@@ -117,24 +104,6 @@ class Pemesanan_detail extends ResourcePresenter
     }
 
 
-    public function edit($id = null)
-    {
-        //
-    }
-
-
-    public function update($id = null)
-    {
-        //
-    }
-
-
-    public function remove($id = null)
-    {
-        //
-    }
-
-
     public function delete($id = null)
     {
         $id_pemesanan = $this->request->getPost('id_pemesanan');
@@ -150,7 +119,6 @@ class Pemesanan_detail extends ResourcePresenter
     }
 
 
-
     public function check_list_produk()
     {
         $id_pemesanan = $this->request->getVar('id_pemesanan');
@@ -164,7 +132,6 @@ class Pemesanan_detail extends ResourcePresenter
         }
         echo json_encode($json);
     }
-
 
 
     public function kirim_pemesanan()

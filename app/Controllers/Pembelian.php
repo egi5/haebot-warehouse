@@ -13,6 +13,7 @@ class Pembelian extends ResourcePresenter
 {
     protected $helpers = ['form', 'nomor_auto_helper'];
 
+
     public function index()
     {
         return view('pembelian/index');
@@ -24,7 +25,7 @@ class Pembelian extends ResourcePresenter
         if ($this->request->isAJAX()) {
             $db = \Config\Database::connect();
             $data =  $db->table('pembelian')
-                ->select('pembelian.id, pembelian.no_pembelian, pembelian.tanggal, supplier.nama as supplier, pembelian.total_harga_produk, pembelian.status')
+                ->select('pembelian.id, pembelian.no_pembelian, pembelian.tanggal, supplier.nama as supplier, pembelian.total_harga_produk, pembelian.status, pembelian.status_pembayaran')
                 ->join('supplier', 'pembelian.id_supplier = supplier.id', 'left')
                 ->where('pembelian.deleted_at', null)
                 ->orderBy('pembelian.id', 'desc');
@@ -34,21 +35,21 @@ class Pembelian extends ResourcePresenter
                 ->add('aksi', function ($row) {
                     if ($row->status == 'Belum Fixing') {
                         return '
-                    <a title="Edit Pembelian" class="px-2 py-0 btn btn-sm btn-outline-primary" href="' . base_url() . '/list_pembelian/' . $row->no_pembelian . '">
-                        <i class="fa-fw fa-solid fa-circle-arrow-right"></i>
-                    </a>
+                            <a title="Edit Pembelian" class="px-2 py-0 btn btn-sm btn-outline-primary" href="' . base_url() . '/list_pembelian/' . $row->no_pembelian . '">
+                                <i class="fa-fw fa-solid fa-circle-arrow-right"></i>
+                            </a>
 
-                    <form id="form_delete" method="POST" class="d-inline">
-                        ' . csrf_field() . '
-                        <input type="hidden" name="_method" value="DELETE">
-                    </form>
-                    <button onclick="confirm_delete(' . $row->id . ')" title="Hapus" type="button" class="px-2 py-0 btn btn-sm btn-outline-danger"><i class="fa-fw fa-solid fa-trash"></i></button>
-                    ';
+                            <form id="form_delete" method="POST" class="d-inline">
+                                ' . csrf_field() . '
+                                <input type="hidden" name="_method" value="DELETE">
+                            </form>
+                            <button onclick="confirm_delete(' . $row->id . ')" title="Hapus" type="button" class="px-2 py-0 btn btn-sm btn-outline-danger"><i class="fa-fw fa-solid fa-trash"></i></button>
+                            ';
                     } else {
                         return '
-                    <a title="Detail" class="px-2 py-0 btn btn-sm btn-outline-dark" onclick="showModalDetail(\'' . $row->no_pembelian . '\')">
-                        <i class="fa-fw fa-solid fa-magnifying-glass"></i>
-                    </a>';
+                            <a title="Detail" class="px-2 py-0 btn btn-sm btn-outline-dark" onclick="showModalDetail(\'' . $row->no_pembelian . '\')">
+                                <i class="fa-fw fa-solid fa-magnifying-glass"></i>
+                            </a>';
                     }
                 }, 'last')
                 ->toJson(true);
@@ -82,59 +83,8 @@ class Pembelian extends ResourcePresenter
     }
 
 
-    public function new()
-    {
-        if ($this->request->isAJAX()) {
-
-            $json = [
-                'data' => view('pembelian/add'),
-            ];
-
-            echo json_encode($json);
-        } else {
-            return 'Tidak bisa load';
-        }
-    }
-
-
-    public function check_pembelian()
-    {
-        $modelPembelian = new PembelianModel();
-        $modelPemesanan = new PemesananModel();
-
-        $no_pemesanan = $this->request->getVar('no_pemesanan');
-        $pemesanan = $modelPemesanan->where(['no_pemesanan' => $no_pemesanan])->first();
-
-        if ($pemesanan) {
-            $pembelian = $modelPembelian->where(['id_pemesanan' => $pemesanan['id']])->first();
-            if ($pembelian) {
-                $json = ['pemesanan_already_exist' => 'exist', 'no_pembelian' => $pembelian['no_pembelian']];
-            } else {
-                $json = ['ok' => 'ok'];
-            }
-        } else {
-            $json = ['not_found_pemesanan' => 'not_found_pemesanan'];
-        }
-        echo json_encode($json);
-    }
-
-
     public function create()
     {
-        $validasi = [
-            'no_pemesanan' => [
-                'rules' => 'required',
-                'errors' => [
-                    'required' => 'Nomor pemesanan harus diisi.',
-                ]
-            ],
-        ];
-
-        if (!$this->validate($validasi)) {
-            session()->setFlashdata('pesan', 'Maaf, terjadi error dengan no pemesanan.');
-            return redirect()->to('/pembelian');
-        }
-
         $modelPembelian = new PembelianModel();
         $modelPemesanan = new PemesananModel();
         $modelPembelianDetail = new PembelianDetailModel();
@@ -169,25 +119,59 @@ class Pembelian extends ResourcePresenter
             $modelPembelianDetail->save($data_produk);
         }
 
+        $data_update_pemesanan = [
+            'id'                    => $pemesanan['id'],
+            'status'                => 'Pembelian'
+        ];
+        $modelPemesanan->save($data_update_pemesanan);
+
         return redirect()->to('/list_pembelian/' . $no_pembelian);
     }
 
 
-    public function edit($id = null)
+    public function check_produk_pembelian()
     {
-        //
+        $id_pembelian = $this->request->getVar('id_pembelian');
+        $modelPembelianDetail = new PembelianDetailModel();
+        $produk = $modelPembelianDetail->where(['id_pembelian' => $id_pembelian])->findAll();
+
+        if ($produk) {
+            $json = ['ok' => 'ok'];
+        } else {
+            $json = ['null' => null];
+        }
+        echo json_encode($json);
     }
 
 
-    public function update($id = null)
+    public function simpan_pembelian()
     {
-        //
-    }
+        date_default_timezone_set('Asia/Jakarta');
+        $id_pembelian = $this->request->getVar('id_pembelian');
 
+        $modelPembelian = new PembelianModel();
+        $pembelian = $modelPembelian->find($id_pembelian);
 
-    public function remove($id = null)
-    {
-        //
+        $modelPembelianDetail = new PembelianDetailModel();
+        $sum = $modelPembelianDetail->sumTotalHargaProduk($id_pembelian);
+
+        $data_update = [
+            'id'                    => $pembelian['id'],
+            'id_user'               => $this->request->getVar('id_admin'),
+            'id_gudang'             => $this->request->getVar('gudang'),
+            'total_harga_produk'    => $sum['total_harga'],
+            'panjang'               => $this->request->getVar('panjang'),
+            'lebar'                 => $this->request->getVar('lebar'),
+            'tinggi'                => $this->request->getVar('tinggi'),
+            'berat'                 => $this->request->getVar('berat'),
+            'carton_koli'           => $this->request->getVar('carton_koli'),
+            'catatan'               => $this->request->getVar('catatan'),
+            'status'                => 'Diproses'
+        ];
+        $modelPembelian->save($data_update);
+
+        session()->setFlashdata('pesan', 'Berhasil membuat tagihan pembelian.');
+        return redirect()->to('/pembelian');
     }
 
 

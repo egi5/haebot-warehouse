@@ -14,7 +14,7 @@ foreach ($produk_pembelian as $pr) : ?>
             <div id="text_harga_satuan_<?= $pr['id'] ?>">Rp. <?= number_format($pr['harga_satuan'], 0, ',', '.') ?></div>
         </td>
         <td>
-            <input hidden id="new_qty_<?= $pr['id'] ?>" type="number" class="form-control py-1 px-3" value="<?= $pr['qty'] ?>">
+            <input hidden id="new_qty_<?= $pr['id'] ?>" type="number" min="1" class="form-control py-1 px-3" value="<?= $pr['qty'] ?>">
             <div id="text_qty_<?= $pr['id'] ?>"><?= $pr['qty'] ?></div>
         </td>
         <td>Rp. <?= number_format($pr['total_harga'], 0, ',', '.') ?></td>
@@ -83,11 +83,10 @@ foreach ($produk_pembelian as $pr) : ?>
             contentType: 'application/json',
             success: function(response) {
                 if (response) {
-                    Swal.fire(
-                        'Berhasil',
-                        'Berhasil mengupdate list produk pembelian',
-                        'success'
-                    )
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Berhasil update list produk pembelian'
+                    })
                     load_list();
                     $('#input_new_harga_satuan_' + id).attr('hidden', true);
                     $('#new_qty_' + id).attr('hidden', true);

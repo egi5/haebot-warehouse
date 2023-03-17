@@ -46,12 +46,12 @@
                         <div class="sb-nav-link-icon">
                             <i class="fa-fw fa-regular fa-rectangle-list"></i>
                         </div>
-                        Pemesanan
+                        Plan Pemesanan
                     </a>
                 <?php endif; ?>
 
                 <?php if (has_permission('pembelian')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>pembelian">
+                    <a class="nav-link" href="<?= base_url() ?>fixing_pemesanan">
                         <div class="sb-nav-link-icon">
                             <i class="fa-fw fa-solid fa-list-check"></i>
                         </div>
@@ -60,7 +60,7 @@
                 <?php endif; ?>
 
                 <?php if (has_permission('pembelian')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>data_pembelian">
+                    <a class="nav-link" href="<?= base_url() ?>pembelian">
                         <div class="sb-nav-link-icon">
                             <i class="fa-fw fa-solid fa-bars"></i>
                         </div>

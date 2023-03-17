@@ -25,10 +25,10 @@
                     <th class="text-center" width="5%">No</th>
                     <th class="text-center" width="13%">Nomor</th>
                     <th class="text-center" width="12%">Tanggal</th>
-                    <th class="text-center" width="25%">Supplier</th>
+                    <th class="text-center" width="30%">Supplier</th>
                     <th class="text-center" width="15%">Total</th>
                     <th class="text-center" width="15%">Status</th>
-                    <th class="text-center" width="15%">Aksi</th>
+                    <th class="text-center" width="10%">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -94,6 +94,7 @@
         }
     })
 
+
     $(document).ready(function() {
         $('#tabel').DataTable({
             processing: true,
@@ -147,7 +148,6 @@
     })
 
 
-
     function showModalTambah() {
         $.ajax({
             type: 'GET',
@@ -185,6 +185,7 @@
         })
     }
 
+
     function confirm_delete(id) {
         Swal.fire({
             title: 'Konfirmasi?',
@@ -198,6 +199,26 @@
             if (result.isConfirmed) {
                 $('#form_delete').attr('action', '<?= site_url() ?>pemesanan/' + id);
                 $('#form_delete').submit();
+            }
+        })
+    }
+
+
+    function repeatPemesanan(no) {
+        $.ajax({
+            type: 'GET',
+            url: '<?= site_url() ?>repeat_pemesanan/' + no,
+            dataType: 'json',
+            success: function(res) {
+                if (res.data) {
+                    $('#isiShow').html(res.data)
+                    $('#my-modal-show').modal('toggle')
+                } else {
+                    console.log(res)
+                }
+            },
+            error: function(e) {
+                alert('Error \n' + e.responseText);
             }
         })
     }

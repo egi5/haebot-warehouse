@@ -7,12 +7,7 @@
 
     <div class="d-flex mb-0">
         <div class="me-auto mb-1">
-            <h3 style="color: #566573;">Fixing Pemesanan dan Buat Pembelian</h3>
-        </div>
-        <div class="mb-1">
-            <a class="btn btn-sm btn-outline-secondary mb-3" id="tombolTambah">
-                <i class="fa-fw fa-solid fa-plus"></i> Buat Pembelian
-            </a>
+            <h3 style="color: #566573;">Data Pembelian</h3>
         </div>
     </div>
 
@@ -23,12 +18,13 @@
             <thead>
                 <tr>
                     <th class="text-center" width="5%">No</th>
-                    <th class="text-center" width="13%">Nomor</th>
-                    <th class="text-center" width="12%">Tanggal</th>
+                    <th class="text-center" width="11%">Nomor</th>
+                    <th class="text-center" width="10%">Tanggal</th>
                     <th class="text-center" width="25%">Supplier</th>
-                    <th class="text-center" width="15%">Total</th>
-                    <th class="text-center" width="15%">Status</th>
-                    <th class="text-center" width="15%">Aksi</th>
+                    <th class="text-center" width="14%">Total</th>
+                    <th class="text-center" width="12%">Status</th>
+                    <th class="text-center" width="12%">Pembayaran</th>
+                    <th class="text-center" width="9%">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,24 +36,6 @@
 </main>
 
 <?= $this->include('MyLayout/js') ?>
-
-
-
-<!-- Modal -->
-<div class="modal fade" id="my-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="judulModal">Buat Pembelian</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="isiForm">
-
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal -->
 
 <!-- Modal -->
 <div class="modal fade" id="my-modal-show" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -75,30 +53,12 @@
 </div>
 <!-- Modal -->
 
-
-
 <script>
-    // Bahan Alert
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 5000,
-        timerProgressBar: true,
-        background: '#EC7063',
-        color: '#fff',
-        iconColor: '#fff',
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    })
-
     $(document).ready(function() {
         $('#tabel').DataTable({
             processing: true,
             serverSide: true,
-            ajax: '<?= site_url() ?>getdatapembelian',
+            ajax: '<?= site_url() ?>get_data_pembelian',
             order: [],
             columns: [{
                     data: 'no',
@@ -123,54 +83,22 @@
                     data: 'status'
                 },
                 {
+                    data: 'status_pembayaran'
+                },
+                {
                     data: 'aksi',
                     orderable: false,
                     className: 'text-center'
                 },
             ]
         });
-
-        // Alert
-        var op = <?= (!empty(session()->getFlashdata('pesan')) ? json_encode(session()->getFlashdata('pesan')) : '""'); ?>;
-        if (op != '') {
-            Toast.fire({
-                icon: 'success',
-                title: op
-            })
-        }
     });
-
-
-    $('#tombolTambah').click(function(e) {
-        e.preventDefault();
-        showModalTambah();
-    })
-
-
-
-    function showModalTambah() {
-        $.ajax({
-            type: 'GET',
-            url: '<?= site_url() ?>pembelian/new',
-            dataType: 'json',
-            success: function(res) {
-                if (res.data) {
-                    $('#isiForm').html(res.data)
-                    $('#my-modal').modal('toggle')
-                    $('#cari_no_pemesanan').focus();
-                }
-            },
-            error: function(e) {
-                alert('Error \n' + e.responseText);
-            }
-        })
-    }
 
 
     function showModalDetail(no) {
         $.ajax({
             type: 'GET',
-            url: '<?= site_url() ?>pembelian/' + no,
+            url: '<?= site_url() ?>show_data_pembelian/' + no,
             dataType: 'json',
             success: function(res) {
                 if (res.data) {

@@ -12,10 +12,6 @@ class Pembelian_detail extends ResourcePresenter
 {
     protected $helpers = ['user_admin_helper'];
 
-    public function index()
-    {
-    }
-
 
     public function List_pembelian($no_pembelian)
     {
@@ -64,16 +60,6 @@ class Pembelian_detail extends ResourcePresenter
         } else {
             return 'Tidak bisa load';
         }
-    }
-
-
-    public function show($id = null)
-    {
-    }
-
-
-    public function new()
-    {
     }
 
 
@@ -126,12 +112,6 @@ class Pembelian_detail extends ResourcePresenter
     }
 
 
-    public function edit($id = null)
-    {
-        //
-    }
-
-
     public function update($id = null)
     {
 
@@ -163,12 +143,6 @@ class Pembelian_detail extends ResourcePresenter
     }
 
 
-    public function remove($id = null)
-    {
-        //
-    }
-
-
     public function delete($id = null)
     {
         $id_pembelian = $this->request->getPost('id_pembelian');
@@ -188,53 +162,7 @@ class Pembelian_detail extends ResourcePresenter
         ];
         $modelPembelian->save($data_update);
 
-        session()->setFlashdata('pesan', 'Data berhasil dihapus.');
+        session()->setFlashdata('pesan', 'List Produk berhasil dihapus.');
         return redirect()->to('/list_pembelian/' . $no_pembelian);
-    }
-
-
-
-    public function check_produk_pembelian()
-    {
-        $id_pembelian = $this->request->getVar('id_pembelian');
-        $modelPembelianDetail = new PembelianDetailModel();
-        $produk = $modelPembelianDetail->where(['id_pembelian' => $id_pembelian])->findAll();
-
-        if ($produk) {
-            $json = ['ok' => 'ok'];
-        } else {
-            $json = ['null' => null];
-        }
-        echo json_encode($json);
-    }
-
-
-
-    public function simpan_pembelian()
-    {
-        date_default_timezone_set('Asia/Jakarta');
-        $id_pembelian = $this->request->getVar('id_pembelian');
-
-        $modelPembelian = new PembelianModel();
-        $pembelian = $modelPembelian->find($id_pembelian);
-
-        $modelPembelianDetail = new PembelianDetailModel();
-        $sum = $modelPembelianDetail->sumTotalHargaProduk($id_pembelian);
-
-        $data_update = [
-            'id'                    => $pembelian['id'],
-            'id_user'               => $this->request->getVar('id_admin'),
-            'id_gudang'             => $this->request->getVar('gudang'),
-            'total_harga_produk'    => $sum['total_harga'],
-            'dimensi'               => $this->request->getVar('dimensi'),
-            'berat'                 => $this->request->getVar('berat'),
-            'carton_koli'           => $this->request->getVar('carton_koli'),
-            'catatan'               => $this->request->getVar('catatan'),
-            'status'                => 'Diproses'
-        ];
-        $modelPembelian->save($data_update);
-
-        session()->setFlashdata('pesan', 'Berhasil membuat tagihan pembelian.');
-        return redirect()->to('/pembelian');
     }
 }

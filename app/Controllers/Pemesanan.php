@@ -12,6 +12,7 @@ class Pemesanan extends ResourcePresenter
 {
     protected $helpers = ['form', 'nomor_auto_helper'];
 
+
     public function index()
     {
         return view('pemesanan/index');
@@ -64,21 +65,17 @@ class Pemesanan extends ResourcePresenter
             $pemesanan = $modelPemesanan->getPemesanan($no);
 
             if ($pemesanan) {
-                if ($pemesanan['status'] == 'Pending') {
-                    $json = ['error' => 'Belum di kirim ke supplier.'];
-                } else {
-                    $modelPemesananDetail = new PemesananDetailModel();
-                    $pemesanan_detail = $modelPemesananDetail->getListProdukPemesanan($pemesanan['id']);
+                $modelPemesananDetail = new PemesananDetailModel();
+                $pemesanan_detail = $modelPemesananDetail->getListProdukPemesanan($pemesanan['id']);
 
-                    $data = [
-                        'pemesanan' => $pemesanan,
-                        'pemesanan_detail' => $pemesanan_detail,
-                    ];
+                $data = [
+                    'pemesanan' => $pemesanan,
+                    'pemesanan_detail' => $pemesanan_detail,
+                ];
 
-                    $json = [
-                        'data' => view('pemesanan/show', $data),
-                    ];
-                }
+                $json = [
+                    'data' => view('pemesanan/show', $data),
+                ];
             } else {
                 $json = [];
             }
@@ -172,24 +169,6 @@ class Pemesanan extends ResourcePresenter
     }
 
 
-    public function edit($id = null)
-    {
-        //
-    }
-
-
-    public function update($id = null)
-    {
-        //
-    }
-
-
-    public function remove($id = null)
-    {
-        //
-    }
-
-
     public function delete($id = null)
     {
         $modelPemesananDetail = new PemesananDetailModel();
@@ -200,5 +179,69 @@ class Pemesanan extends ResourcePresenter
 
         session()->setFlashdata('pesan', 'Data pemesanan berhasil dihapus.');
         return redirect()->to('/pemesanan');
+    }
+
+
+    public function fixingPemesanan()
+    {
+        return view('pemesanan/fixing');
+    }
+
+
+    public function getDataPemesananOrdered()
+    {
+        if ($this->request->isAJAX()) {
+            $db = \Config\Database::connect();
+            $data =  $db->table('pemesanan')
+                ->select('pemesanan.id, pemesanan.no_pemesanan, pemesanan.tanggal, supplier.nama as supplier, pemesanan.total_harga_produk, pemesanan.status')
+                ->join('supplier', 'pemesanan.id_supplier = supplier.id', 'left')
+                ->where('pemesanan.deleted_at', null)
+                ->where('pemesanan.status', 'ordered')
+                ->orderBy('pemesanan.id', 'desc');
+
+            return DataTable::of($data)
+                ->addNumbering('no')
+                ->add('aksi', function ($row) {
+                    return '
+                    <form action="' . site_url() . 'pembelian" method="POST" class="d-inline">
+                        ' . csrf_field() . '
+                        <input type="hidden" name="no_pemesanan" value="' . $row->no_pemesanan . '">
+                        <button title="Buat Pembelian" type="submit" class="px-2 py-0 btn btn-sm btn-outline-primary"><i class="fa-fw fa-solid fa-circle-arrow-right"></i></button>
+                    </form>';
+                }, 'last')
+                ->toJson(true);
+        } else {
+            return "Tidak bisa load data.";
+        }
+    }
+
+
+    public function repeatPemesanan($no = null)
+    {
+        if ($this->request->isAJAX()) {
+            $modelPemesanan = new PemesananModel();
+            $pemesanan = $modelPemesanan->getPemesanan($no);
+
+            if ($pemesanan) {
+                $modelPemesananDetail = new PemesananDetailModel();
+                $pemesanan_detail = $modelPemesananDetail->getListProdukPemesanan($pemesanan['id']);
+
+                $data = [
+                    'pemesanan' => $pemesanan,
+                    'pemesanan_detail' => $pemesanan_detail,
+                    'nomor_pemesanan_auto'  => nomor_pemesanan_auto(date('Y-m-d'))
+                ];
+
+                $json = [
+                    'data' => view('pemesanan/show', $data),
+                ];
+            } else {
+                $json = [];
+            }
+
+            echo json_encode($json);
+        } else {
+            return 'Tidak bisa load';
+        }
     }
 }

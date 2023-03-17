@@ -2,6 +2,13 @@
 
 <?= $this->section('content') ?>
 
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
 
 <main class="p-md-3 p-2">
 
@@ -93,16 +100,40 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Dimensi</label>
-                            <input type="text" class="form-control" id="dimensi" name="dimensi">
+                            <div class="row g-2">
+                                <div class="col-sm-4">
+                                    <p class="mb-1">Panjang</p>
+                                    <div class="input-group mb-3">
+                                        <input type="number" min="1" value="1" class="form-control" id="panjang" name="panjang">
+                                        <span class="input-group-text px-2">m</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <p class="mb-1">Lebar</p>
+                                    <div class="input-group mb-3">
+                                        <input type="number" min="1" value="1" class="form-control" id="lebar" name="lebar">
+                                        <span class="input-group-text px-2">m</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <p class="mb-1">Tinggi</p>
+                                    <div class="input-group mb-3">
+                                        <input type="number" min="1" value="1" class="form-control" id="tinggi" name="tinggi">
+                                        <span class="input-group-text px-2">m</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Berat</label>
-                            <input type="text" class="form-control" id="berat" name="berat">
+                            <div class="input-group mb-3">
+                                <input type="number" min="1" value="1" class="form-control" id="berat" name="berat">
+                                <span class="input-group-text px-2">kg</span>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Carton / Koli</label>
-                            <input type="text" class="form-control" id="carton_koli" name="carton_koli">
+                            <input type="number" min="1" value="1" class="form-control" id="carton_koli" name="carton_koli">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Catatan</label>
@@ -131,6 +162,21 @@
 <?= $this->include('MyLayout/js') ?>
 
 <script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        background: '#EC7063',
+        color: '#fff',
+        iconColor: '#fff',
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
     $(document).ready(function() {
         $("#id_produk").select2({
             theme: "bootstrap-5",
@@ -141,6 +187,15 @@
         $('#tanggal').datepicker({
             format: "yyyy-mm-dd"
         });
+
+        // Alert
+        var op = <?= (!empty(session()->getFlashdata('pesan')) ? json_encode(session()->getFlashdata('pesan')) : '""'); ?>;
+        if (op != '') {
+            Toast.fire({
+                icon: 'success',
+                title: op
+            })
+        }
 
         load_list();
     })
@@ -176,11 +231,10 @@
                 dataType: "json",
                 success: function(response) {
                     if (response.notif) {
-                        Swal.fire(
-                            'Berhasil',
-                            'Berhasil menambah produk ke dalam List',
-                            'success'
-                        )
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.notif
+                        })
                         load_list();
                         $('#qty').val('');
                         $('#id_produk').val('').trigger('change');
@@ -209,12 +263,26 @@
             $('#gudang').addClass('is-valid');
             $('#gudang').removeClass('is-invalid');
         }
-        if ($('#dimensi').val() == '') {
-            $('#dimensi').removeClass('is-valid');
-            $('#dimensi').addClass('is-invalid');
+        if ($('#panjang').val() == '') {
+            $('#panjang').removeClass('is-valid');
+            $('#panjang').addClass('is-invalid');
         } else {
-            $('#dimensi').addClass('is-valid');
-            $('#dimensi').removeClass('is-invalid');
+            $('#panjang').addClass('is-valid');
+            $('#panjang').removeClass('is-invalid');
+        }
+        if ($('#lebar').val() == '') {
+            $('#lebar').removeClass('is-valid');
+            $('#lebar').addClass('is-invalid');
+        } else {
+            $('#lebar').addClass('is-valid');
+            $('#lebar').removeClass('is-invalid');
+        }
+        if ($('#tinggi').val() == '') {
+            $('#tinggi').removeClass('is-valid');
+            $('#tinggi').addClass('is-invalid');
+        } else {
+            $('#tinggi').addClass('is-valid');
+            $('#tinggi').removeClass('is-invalid');
         }
         if ($('#berat').val() == '') {
             $('#berat').removeClass('is-valid');

@@ -74,10 +74,10 @@
         </div>
         <div class="row mb-2">
             <div class="col-md-4">
-                <div class="fw-bold">Dimensi</div>
+                <div class="fw-bold">Dimensi (PxLxT)</div>
             </div>
             <div class="col-md-8">
-                <?= $pembelian['dimensi'] ?>
+                <?= $pembelian['panjang'] ?> x <?= $pembelian['lebar'] ?> x <?= $pembelian['tinggi'] ?>
             </div>
         </div>
         <div class="row mb-2">
