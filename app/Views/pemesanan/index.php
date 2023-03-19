@@ -48,26 +48,10 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="judulModal">Tambah Pemesanan</h1>
+                <h1 class="modal-title fs-5" id="judulModal"></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="isiForm">
-
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal -->
-
-<!-- Modal -->
-<div class="modal fade" id="my-modal-show" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="judulModalShow">Detail Pemesanan</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="isiShow">
+            <div class="modal-body" id="isiModal">
 
             </div>
         </div>
@@ -155,8 +139,11 @@
             dataType: 'json',
             success: function(res) {
                 if (res.data) {
-                    $('#isiForm').html(res.data)
+                    $('#judulModal').html('Tambah Pemesanan')
+                    $('#isiModal').html(res.data)
                     $('#my-modal').modal('toggle')
+                    $('.modal-dialog').removeClass('modal-xl')
+                    $('.modal-dialog').addClass('modal-lg')
                 }
             },
             error: function(e) {
@@ -173,8 +160,11 @@
             dataType: 'json',
             success: function(res) {
                 if (res.data) {
-                    $('#isiShow').html(res.data)
-                    $('#my-modal-show').modal('toggle')
+                    $('#judulModal').html('Detail Pemesanan')
+                    $('#isiModal').html(res.data)
+                    $('#my-modal').modal('toggle')
+                    $('.modal-dialog').addClass('modal-xl')
+                    $('.modal-dialog').removeClass('modal-lg')
                 } else {
                     console.log(res)
                 }
@@ -211,8 +201,11 @@
             dataType: 'json',
             success: function(res) {
                 if (res.data) {
-                    $('#isiShow').html(res.data)
-                    $('#my-modal-show').modal('toggle')
+                    $('#judulModal').html('Duplikat Pemesanan')
+                    $('#isiModal').html(res.data)
+                    $('#my-modal').modal('toggle')
+                    $('.modal-dialog').addClass('modal-xl')
+                    $('.modal-dialog').removeClass('modal-lg')
                 } else {
                     console.log(res)
                 }

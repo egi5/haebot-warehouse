@@ -67,6 +67,8 @@ $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
     $routes->post('kirim_pemesanan', 'Pemesanan_detail::kirim_pemesanan', ['filter' => 'permission:Pembelian']);
     $routes->post('produks_pemesanan', 'Pemesanan_detail::getListProdukPemesanan', ['filter' => 'permission:Pembelian']);
     $routes->post('check_list_produk', 'Pemesanan_detail::check_list_produk', ['filter' => 'permission:Pembelian']);
+    $routes->get('repeat_pemesanan/(:any)', 'Pemesanan::repeatPemesanan/$1', ['filter' => 'permission:Pembelian']);
+    $routes->post('save_repeat_pemesanan', 'Pemesanan::saveRepeat', ['filter' => 'permission:Pembelian']);
     $routes->resource('pemesanan_detail', ['filter' => 'permission:Pembelian']);
 
     // Fixing Pembelian

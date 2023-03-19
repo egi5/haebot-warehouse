@@ -111,7 +111,7 @@ class Pembelian extends ResourcePresenter
         foreach ($listProdukPemesanan as $produk) {
             $data_produk = [
                 'id_pembelian'          => $id_pembelian,
-                'id_produk'             => $produk['id'],
+                'id_produk'             => $produk['id_produk'],
                 'qty'                   => $produk['qty'],
                 'harga_satuan'          => $produk['harga_satuan'],
                 'total_harga'           => $produk['total_harga'],
@@ -177,10 +177,21 @@ class Pembelian extends ResourcePresenter
 
     public function delete($id = null)
     {
+        $modelPembelian = new PembelianModel();
+        $pembelian = $modelPembelian->find($id);
+
         $modelPembelianDetail = new PembelianDetailModel();
         $modelPembelianDetail->where(['id_pembelian' => $id])->delete();
 
-        $modelPembelian = new PembelianModel();
+        $modelPemesanan = new PemesananModel();
+        $pemesanan = $modelPemesanan->where(['id'=>$pembelian['id_pemesanan']])->first();
+        $modelPemesanan->save(
+            [
+                'id' => $pemesanan['id'],
+                'status'=>'Dihapus',
+            ]
+        );
+
         $modelPembelian->delete($id);
 
         session()->setFlashdata('pesan', 'Data pembelian berhasil dihapus.');

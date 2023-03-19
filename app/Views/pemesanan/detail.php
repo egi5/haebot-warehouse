@@ -77,7 +77,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="supplier" class="form-label">Supplier</label>
-                            <select disabled class="form-select" id="supplier" name="supplier">
+                            <select class="form-select" id="supplier" name="supplier">
                                 <option value=""></option>
                                 <?php foreach ($supplier as $sup) : ?>
                                     <option <?= ($sup['id'] == $pemesanan['id_supplier']) ? 'selected' : '' ?> value="<?= $sup['id'] ?>"><?= $sup['nama'] ?></option>

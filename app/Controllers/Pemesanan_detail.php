@@ -146,7 +146,7 @@ class Pemesanan_detail extends ResourcePresenter
 
         $data_update = [
             'id'                    => $pemesanan['id'],
-            'id_supplier'           => $this->request->getVar('id_supplier'),
+            'id_supplier'           => $this->request->getVar('supplier'),
             'id_user'               => $this->request->getVar('id_user'),
             'total_harga_produk'    => $sum['total_harga'],
             'status'                => 'Ordered'

@@ -48,6 +48,9 @@ class Pemesanan extends ResourcePresenter
                         return '
                     <a title="Detail" class="px-2 py-0 btn btn-sm btn-outline-dark" onclick="showModalDetail(\'' . $row->no_pemesanan . '\')">
                         <i class="fa-fw fa-solid fa-magnifying-glass"></i>
+                    </a>
+                    <a title="Repeat" class="px-2 py-0 btn btn-sm btn-outline-success" onclick="repeatPemesanan(\'' . $row->no_pemesanan . '\')">
+                        <i class="fa-fw fa-solid fa-repeat"></i>
                     </a>';
                     }
                 }, 'last')
@@ -233,10 +236,78 @@ class Pemesanan extends ResourcePresenter
                 ];
 
                 $json = [
-                    'data' => view('pemesanan/show', $data),
+                    'data' => view('pemesanan/repeat', $data),
                 ];
             } else {
                 $json = [];
+            }
+
+            echo json_encode($json);
+        } else {
+            return 'Tidak bisa load';
+        }
+    }
+
+
+    public function saveRepeat()
+    {
+        if ($this->request->isAJAX()) {
+            $validasi = [
+                'no_pemesanan' => [
+                    'rules' => 'required|is_unique[pemesanan.no_pemesanan]',
+                    'errors' => [
+                        'required' => 'Nomor pemesanan harus diisi.',
+                        'is_unique' => 'Nomor pemesanan sudah ada dalam database.'
+                    ]
+                ],
+                'tanggal' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'required' => 'tanggal pemesanan harus diisi.',
+                    ]
+                ]
+            ];
+
+            if (!$this->validate($validasi)) {
+                $validation = \Config\Services::validation();
+
+                $error = [
+                    'error_no_pemesanan' => $validation->getError('no_pemesanan'),
+                    'error_tanggal' => $validation->getError('tanggal'),
+                ];
+
+                $json = [
+                    'error' => $error
+                ];
+            } else {
+                $modelPemesanan = new PemesananModel();
+                $modelPemesananDetail = new PemesananDetailModel();
+
+                $pemesanan = $modelPemesanan->find($this->request->getPost('id_pemesanan'));
+
+                $data = [
+                    'no_pemesanan'          => $this->request->getPost('no_pemesanan'),
+                    'tanggal'               => $this->request->getPost('tanggal'),
+                    'id_supplier'           => $pemesanan['id_supplier'],
+                ];
+                $modelPemesanan->save($data);
+
+                $listProdukPemesanan = $modelPemesananDetail->where(['id_pemesanan' => $pemesanan['id']])->findAll();
+                foreach ($listProdukPemesanan as $produk) {
+                    $data = [
+                        'id_pemesanan'          => $modelPemesanan->getInsertID(),
+                        'id_produk'             => $produk['id_produk'],
+                        'qty'                   => $produk['qty'],
+                        'harga_satuan'          => $produk['harga_satuan'],
+                        'total_harga'           => $produk['total_harga'],
+                    ];
+                    $modelPemesananDetail->save($data);
+                }
+
+                $json = [
+                    'success' => 'Berhasil menambah data produk',
+                    'no_pemesanan' => $this->request->getPost('no_pemesanan'),
+                ];
             }
 
             echo json_encode($json);
