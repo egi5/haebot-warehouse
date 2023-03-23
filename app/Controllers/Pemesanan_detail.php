@@ -34,6 +34,49 @@ class Pemesanan_detail extends ResourcePresenter
     }
 
 
+    public function getProdukForAddList($supplier)
+    {
+        if ($this->request->isAJAX()) {
+            $modelProduk = new ProdukModel();
+            $produkSupplier = $modelProduk->getProdukFormPembelianDetailSupplier($supplier);
+
+            $data = [
+                'produk_supplier' => $produkSupplier
+            ];
+
+            $json = [
+                'data' => view('pemesanan/produk_supplier', $data),
+            ];
+
+            echo json_encode($json);
+        } else {
+            return 'Tidak bisa load';
+        }
+    }
+
+
+    public function findProdukByNamaSKU()
+    {
+        if ($this->request->isAJAX()) {
+            $modelProduk = new ProdukModel();
+            $nama_sku = $this->request->getPost('input_produk_lain');
+            $produk = $modelProduk->findProdukByNamaSKU($nama_sku);
+
+            $data = [
+                'produk' => $produk
+            ];
+
+            $json = [
+                'data' => view('pemesanan/find_produk', $data),
+            ];
+
+            echo json_encode($json);
+        } else {
+            return 'Tidak bisa load';
+        }
+    }
+
+
     public function getListProdukPemesanan()
     {
         if ($this->request->isAJAX()) {

@@ -29,12 +29,8 @@
 
                     <div class="col-md-8">
                         <div class="input-group mb-3">
-                            <select class="form-select" id="id_produk">
-                                <option id="id_produk_default" value=""></option>
-                                <?php foreach ($produk as $pr) : ?>
-                                    <option value="<?= $pr['id'] ?>"><?= $pr['nama'] ?></option>
-                                <?php endforeach ?>
-                            </select>
+                            <input autocomplete="off" type="text" class="form-control" placeholder="Cari Produk" id="produk" style="cursor: pointer;">
+                            <input type="hidden" id="id_produk" value="">
                             <input autocomplete="off" type="text" class="form-control" placeholder="Qty" id="qty">
                             <button class="btn btn-secondary px-2" type="button" id="tambah_produk"><i class="fa-fw fa-solid fa-plus"></i></button>
                         </div>
@@ -87,7 +83,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="tanggal" class="form-label">Tanggal</label>
-                            <input disabled type="text" class="form-control" id="tanggal" name="tanggal" value="<?= $pemesanan['tanggal'] ?>">
+                            <input type="text" class="form-control" id="tanggal" name="tanggal" value="<?= $pemesanan['tanggal'] ?>">
                         </div>
                         <div class="mb-3">
                             <label for="user" class="form-label">Admin</label>
@@ -124,13 +120,28 @@
 
 <?= $this->include('MyLayout/js') ?>
 
+
+
+<!-- Modal -->
+<div class="modal fade" id="my-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" style="max-width: 90%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="judulModal"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="isiModal">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+
+
+
 <script>
     $(document).ready(function() {
-        $("#id_produk").select2({
-            theme: "bootstrap-5",
-            placeholder: 'Cari Produk',
-            initSelection: function(element, callback) {}
-        });
         $("#supplier").select2({
             theme: "bootstrap-5",
         });
@@ -145,6 +156,7 @@
         load_list();
         set_value_select2();
     })
+
 
     function load_list() {
         let id_pemesanan = '<?= $pemesanan['id'] ?>'
@@ -162,10 +174,32 @@
         });
     }
 
+
     function set_value_select2() {
         $('#id_supplier').val($('#supplier').val());
         $('#id_user').val($('#user').val());
     }
+
+
+    $('#produk').click(function() {
+        let supplier = $('#supplier').val();
+        $.ajax({
+            type: 'GET',
+            url: '<?= site_url() ?>get_produk_add_list/' + supplier,
+            dataType: 'json',
+            success: function(res) {
+                if (res.data) {
+                    $('#judulModal').html('Pencarian Produk')
+                    $('#isiModal').html(res.data)
+                    $('#my-modal').modal('toggle')
+                }
+            },
+            error: function(e) {
+                alert('Error \n' + e.responseText);
+            }
+        })
+    })
+
 
     $('#tambah_produk').click(function() {
         let id_produk = $('#id_produk').val();
@@ -189,7 +223,8 @@
                         )
                         load_list();
                         $('#qty').val('');
-                        $('#id_produk').val('').trigger('change');
+                        $('#id_produk').val('');
+                        $('#produk').val('');
                     } else {
                         alert('terjadi error tambah list produk')
                     }
@@ -206,6 +241,7 @@
             )
         }
     })
+
 
     $('#kirim_pemesanan').click(function() {
         let id_pemesanan = '<?= $pemesanan['id'] ?>'

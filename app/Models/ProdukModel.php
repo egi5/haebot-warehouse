@@ -58,4 +58,31 @@ class ProdukModel extends Model
 
         return $data;
     }
+
+    public function getProdukFormPembelianDetailSupplier($id_supplier)
+    {
+        $data =  $this->db->table('pembelian_detail')
+            ->select('pembelian_detail.*, produk.nama as produk, produk.stok')
+            ->join('produk', 'pembelian_detail.id_produk = produk.id', 'left')
+            ->join('pembelian', 'pembelian.id = pembelian_detail.id_pembelian')
+            ->where('pembelian.id_supplier', $id_supplier)
+            ->orderBy('pembelian.id', 'desc')
+            ->get()
+            ->getResultArray();
+
+        return $data;
+    }
+
+    public function findProdukByNamaSKU($nama_sku)
+    {
+        $data =  $this->db->table('produk')
+            ->select('produk.*')
+            ->like('produk.nama', $nama_sku)
+            ->orLike('produk.sku', $nama_sku)
+            ->orderBy('produk.nama', 'asc')
+            ->get()
+            ->getResultArray();
+
+        return $data;
+    }
 }

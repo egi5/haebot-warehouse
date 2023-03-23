@@ -62,6 +62,8 @@ $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
 
     // Pemesanan
     $routes->resource('pemesanan', ['filter' => 'permission:Pembelian']);
+    $routes->get('get_produk_add_list/(:any)', 'Pemesanan_detail::getProdukForAddList/$1', ['filter' => 'permission:Pembelian']);
+    $routes->post('find_produk_by_nama_sku', 'Pemesanan_detail::findProdukByNamaSKU', ['filter' => 'permission:Pembelian']);
     $routes->get('getdatapemesanan', 'Pemesanan::getDataPemesanan', ['filter' => 'permission:Pembelian']);
     $routes->get('list_pemesanan/(:any)', 'Pemesanan_detail::List_pemesanan/$1', ['filter' => 'permission:Pembelian']);
     $routes->post('kirim_pemesanan', 'Pemesanan_detail::kirim_pemesanan', ['filter' => 'permission:Pembelian']);
