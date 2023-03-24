@@ -69,7 +69,7 @@
                         <input type="hidden" name="id_pemesanan" value="<?= $pemesanan['id'] ?>">
                         <div class="mb-3">
                             <label for="no_pemesanan" class="form-label">Nomor Pemesanan</label>
-                            <input disabled type="text" class="form-control" id="no_pemesanan" name="no_pemesanan" value="<?= $pemesanan['no_pemesanan'] ?>">
+                            <input readonly type="text" class="form-control" id="no_pemesanan" name="no_pemesanan" value="<?= $pemesanan['no_pemesanan'] ?>">
                         </div>
                         <div class="mb-3">
                             <label for="supplier" class="form-label">Supplier</label>
@@ -83,7 +83,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="tanggal" class="form-label">Tanggal</label>
-                            <input type="text" class="form-control" id="tanggal" name="tanggal" value="<?= $pemesanan['tanggal'] ?>">
+                            <input onchange="ganti_no_pemesanan()" type="text" class="form-control" id="tanggal" name="tanggal" value="<?= $pemesanan['tanggal'] ?>">
                         </div>
                         <div class="mb-3">
                             <label for="user" class="form-label">Admin</label>
@@ -101,9 +101,9 @@
 
             <div class="card mb-3">
                 <div class="card-body" style="background-color: #E6ECF0;">
-                    <a class="d-grid gap-2 text-decoration-none" href="<?= site_url() ?>pemesanan">
+                    <div class="d-grid gap-2">
                         <button class="btn btn-success" id="simpan_pemesanan">Simpan Pemesanan <i class="fa-solid fa-floppy-disk"></i></button>
-                    </a>
+                    </div>
                     <br>
                     <div class="d-grid gap-2">
                         <button class="btn btn-danger" id="kirim_pemesanan">Kirim Pemesanan <i class="fa-solid fa-arrow-right"></i></button>
@@ -167,6 +167,31 @@
             dataType: "json",
             success: function(response) {
                 $('#tabel_list_produk').html(response.list)
+            },
+            error: function(e) {
+                alert('Error \n' + e.responseText);
+            }
+        });
+    }
+
+
+    function ganti_no_pemesanan() {
+        let tanggal = $('#tanggal').val()
+        $.ajax({
+            type: "post",
+            url: "<?= base_url() ?>/ganti_no_pemesanan",
+            data: 'tanggal=' + tanggal,
+            dataType: "json",
+            success: function(response) {
+                if (response.no_pemesanan) {
+                    $('#no_pemesanan').val(response.no_pemesanan)
+                } else {
+                    Swal.fire(
+                        'Opss.',
+                        'Terjadi kesalahan, hubungi IT Support',
+                        'error'
+                    )
+                }
             },
             error: function(e) {
                 alert('Error \n' + e.responseText);
@@ -240,6 +265,37 @@
                 'error'
             )
         }
+    })
+
+
+    $('#simpan_pemesanan').click(function() {
+        let id_pemesanan = '<?= $pemesanan['id'] ?>'
+        let no_pemesanan = $('#no_pemesanan').val()
+        let id_supplier = $('#supplier').val()
+        let tanggal = $('#tanggal').val()
+        $.ajax({
+            type: "post",
+            url: "<?= base_url() ?>/simpan_pemesanan",
+            data: 'id_pemesanan=' + id_pemesanan +
+                '&no_pemesanan=' + no_pemesanan +
+                '&id_supplier=' + id_supplier +
+                '&tanggal=' + tanggal,
+            dataType: "json",
+            success: function(response) {
+                if (response.ok) {
+                    location.href = '<?= site_url() ?>pemesanan'
+                } else {
+                    Swal.fire(
+                        'Opss.',
+                        'Terjadi kesalahan, hubungi IT Support',
+                        'error'
+                    )
+                }
+            },
+            error: function(e) {
+                alert('Error \n' + e.responseText);
+            }
+        });
     })
 
 

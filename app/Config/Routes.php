@@ -66,11 +66,14 @@ $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
     $routes->post('find_produk_by_nama_sku', 'Pemesanan_detail::findProdukByNamaSKU', ['filter' => 'permission:Pembelian']);
     $routes->get('getdatapemesanan', 'Pemesanan::getDataPemesanan', ['filter' => 'permission:Pembelian']);
     $routes->get('list_pemesanan/(:any)', 'Pemesanan_detail::List_pemesanan/$1', ['filter' => 'permission:Pembelian']);
-    $routes->post('kirim_pemesanan', 'Pemesanan_detail::kirim_pemesanan', ['filter' => 'permission:Pembelian']);
+    $routes->post('ganti_no_pemesanan', 'Pemesanan_detail::gantiNoPemesanan', ['filter' => 'permission:Pembelian']);
+    $routes->post('simpan_pemesanan', 'Pemesanan_detail::simpanPemesanan', ['filter' => 'permission:Pembelian']);
+    $routes->post('kirim_pemesanan', 'Pemesanan_detail::kirimPemesanan', ['filter' => 'permission:Pembelian']);
     $routes->post('produks_pemesanan', 'Pemesanan_detail::getListProdukPemesanan', ['filter' => 'permission:Pembelian']);
-    $routes->post('check_list_produk', 'Pemesanan_detail::check_list_produk', ['filter' => 'permission:Pembelian']);
+    $routes->post('check_list_produk', 'Pemesanan_detail::checkListProduk', ['filter' => 'permission:Pembelian']);
     $routes->get('repeat_pemesanan/(:any)', 'Pemesanan::repeatPemesanan/$1', ['filter' => 'permission:Pembelian']);
     $routes->post('save_repeat_pemesanan', 'Pemesanan::saveRepeat', ['filter' => 'permission:Pembelian']);
+    $routes->post('alasan_hapus_pemesanan', 'Pemesanan::alasanHapusPemesanan', ['filter' => 'permission:Pembelian']);
     $routes->resource('pemesanan_detail', ['filter' => 'permission:Pembelian']);
 
     // Fixing Pembelian
@@ -78,14 +81,16 @@ $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
     $routes->get('get_pemesanan_ordered', 'Pemesanan::getDataPemesananOrdered', ['filter' => 'permission:Pembelian']);
     $routes->get('list_pembelian/(:any)', 'Pembelian_detail::List_pembelian/$1', ['filter' => 'permission:Pembelian']);
     $routes->post('produks_pembelian', 'Pembelian_detail::getListProdukPembelian', ['filter' => 'permission:Pembelian']);
+    $routes->post('ganti_no_pembelian', 'Pembelian_detail::gantiNoPembelian', ['filter' => 'permission:Pembelian']);
     $routes->resource('pembelian_detail', ['filter' => 'permission:Pembelian']);
 
     // Pembelian
     $routes->resource('pembelian', ['filter' => 'permission:Pembelian']);
     $routes->get('get_data_pembelian', 'Pembelian::getDataPembelian', ['filter' => 'permission:Pembelian']);
     $routes->get('show_data_pembelian/(:any)', 'Pembelian::show/$1', ['filter' => 'permission:Pembelian']);
-    $routes->post('check_produk_pembelian', 'Pembelian::check_produk_pembelian', ['filter' => 'permission:Pembelian']);
-    $routes->post('simpan_pembelian', 'Pembelian::simpan_pembelian', ['filter' => 'permission:Pembelian']);
+    $routes->post('check_produk_pembelian', 'Pembelian::checkProdukPembelian', ['filter' => 'permission:Pembelian']);
+    $routes->post('simpan_pembelian', 'Pembelian::simpanPembelian', ['filter' => 'permission:Pembelian']);
+    $routes->post('buat_pembelian', 'Pembelian::buatPembelian', ['filter' => 'permission:Pembelian']);
 });
 
 /*

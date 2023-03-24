@@ -17,7 +17,7 @@
             <h3 style="color: #566573;">Fix List Produk Pembelian</h3>
         </div>
         <div class="me-2 mb-1">
-            <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>pembelian">
+            <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>fixing_pemesanan">
                 <i class="fa-fw fa-solid fa-arrow-left"></i> Kembali
             </a>
         </div>
@@ -77,19 +77,32 @@
                 </div>
                 <div class="card-body" style="background-color: #E6ECF0;">
 
-                    <div class="mb-2">Nomor Pembelian : <b><?= $pembelian['no_pembelian'] ?></b></div>
-                    <div class="mb-2">Supplier : <b><?= $pembelian['supplier'] ?></b></div>
-                    <div class="mb-2">Tanggal : <b><?= $pembelian['tanggal'] ?></b></div>
+                    <div class="mb-2">Nomor Pemesanan : <b><?= $pembelian['no_pemesanan'] ?></b></div>
+                    <div class="mb-2" id="text_no_pembelian">Nomor Pembelian : <b><?= $pembelian['no_pembelian'] ?></b></div>
                     <div class="mb-2">Admin : <b><?= user()->name ?></b></div>
 
                     <hr>
 
-                    <form id="form_pembelian" autocomplete="off" action="<?= site_url() ?>simpan_pembelian" method="post">
+                    <form id="form_pembelian" autocomplete="off" action="<?= site_url() ?>buat_pembelian" method="post">
                         <?= csrf_field() ?>
 
                         <input type="hidden" name="id_pembelian" value="<?= $pembelian['id'] ?>">
                         <input type="hidden" name="id_admin" value="<?= user()->id ?>">
+                        <input type="hidden" id="no_pembelian" name="no_pembelian" value="<?= $pembelian['no_pembelian'] ?>">
 
+                        <div class="mb-3">
+                            <label for="tanggal" class="form-label">Tanggal</label>
+                            <input onchange="ganti_no_pembelian()" type="text" class="form-control" id="tanggal" name="tanggal" value="<?= $pembelian['tanggal'] ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="supplier" class="form-label">Supplier</label>
+                            <select class="form-select" id="supplier" name="supplier">
+                                <?php foreach ($supplier as $sup) : ?>
+                                    <option <?= ($sup['id'] == $pembelian['id_supplier']) ? 'selected' : '' ?> value="<?= $sup['id'] ?>"><?= $sup['nama'] ?></option>
+                                <?php endforeach ?>
+                            </select>
+                            <input type="hidden" name="id_supplier" id="id_supplier">
+                        </div>
                         <div class="mb-3">
                             <label for="gudang" class="form-label">Diterima Gudang</label>
                             <select class="form-select" id="gudang" name="gudang">
@@ -104,21 +117,21 @@
                                 <div class="col-sm-4">
                                     <p class="mb-1">Panjang</p>
                                     <div class="input-group mb-3">
-                                        <input type="number" min="1" value="1" class="form-control" id="panjang" name="panjang">
+                                        <input type="number" min="1" value="<?= $pembelian['panjang'] ?>" class="form-control" id="panjang" name="panjang">
                                         <span class="input-group-text px-2">m</span>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <p class="mb-1">Lebar</p>
                                     <div class="input-group mb-3">
-                                        <input type="number" min="1" value="1" class="form-control" id="lebar" name="lebar">
+                                        <input type="number" min="1" value="<?= $pembelian['lebar'] ?>" class="form-control" id="lebar" name="lebar">
                                         <span class="input-group-text px-2">m</span>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <p class="mb-1">Tinggi</p>
                                     <div class="input-group mb-3">
-                                        <input type="number" min="1" value="1" class="form-control" id="tinggi" name="tinggi">
+                                        <input type="number" min="1" value="<?= $pembelian['tinggi'] ?>" class="form-control" id="tinggi" name="tinggi">
                                         <span class="input-group-text px-2">m</span>
                                     </div>
                                 </div>
@@ -127,17 +140,17 @@
                         <div class="mb-3">
                             <label class="form-label">Berat</label>
                             <div class="input-group mb-3">
-                                <input type="number" min="1" value="1" class="form-control" id="berat" name="berat">
+                                <input type="number" min="1" value="<?= $pembelian['berat'] ?>" class="form-control" id="berat" name="berat">
                                 <span class="input-group-text px-2">kg</span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Carton / Koli</label>
-                            <input type="number" min="1" value="1" class="form-control" id="carton_koli" name="carton_koli">
+                            <input type="number" min="1" value="<?= $pembelian['carton_koli'] ?>" class="form-control" id="carton_koli" name="carton_koli">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Catatan</label>
-                            <input type="text" class="form-control" id="catatan" name="catatan">
+                            <input type="text" class="form-control" id="catatan" name="catatan" value="<?= $pembelian['catatan'] ?>">
                         </div>
 
                     </form>
@@ -147,7 +160,11 @@
             <div class="card mb-3">
                 <div class="card-body" style="background-color: #E6ECF0;">
                     <div class="d-grid gap-2">
-                        <button class="btn btn-success" id="btn_simpan_pembelian">Simpan Pembelian <i class="fa-solid fa-floppy-disk"></i></button>
+                        <button class="btn btn-success" id="simpan_pembelian">Simpan Pembelian <i class="fa-solid fa-floppy-disk"></i></button>
+                    </div>
+                    <br>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-danger" id="buat_pembelian">Buat Pembelian <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
                 </div>
             </div>
@@ -177,11 +194,19 @@
         }
     })
 
+
     $(document).ready(function() {
         $("#id_produk").select2({
             theme: "bootstrap-5",
             placeholder: 'Cari Produk',
             initSelection: function(element, callback) {}
+        });
+
+        $("#supplier").select2({
+            theme: "bootstrap-5",
+        });
+        $("#gudang").select2({
+            theme: "bootstrap-5",
         });
 
         $('#tanggal').datepicker({
@@ -200,6 +225,33 @@
         load_list();
     })
 
+
+    function ganti_no_pembelian() {
+        let tanggal = $('#tanggal').val()
+        $.ajax({
+            type: "post",
+            url: "<?= base_url() ?>/ganti_no_pembelian",
+            data: 'tanggal=' + tanggal,
+            dataType: "json",
+            success: function(response) {
+                if (response.no_pembelian) {
+                    $('#text_no_pembelian').html('Nomor Pembelian : <b>' + response.no_pembelian + '</b>');
+                    $('#no_pembelian').val(response.no_pembelian)
+                } else {
+                    Swal.fire(
+                        'Opss.',
+                        'Terjadi kesalahan, hubungi IT Support',
+                        'error'
+                    )
+                }
+            },
+            error: function(e) {
+                alert('Error \n' + e.responseText);
+            }
+        });
+    }
+
+
     function load_list() {
         let id_pembelian = '<?= $pembelian['id'] ?>'
         $.ajax({
@@ -215,6 +267,7 @@
             }
         });
     }
+
 
     $('#tambah_produk').click(function() {
         let id_produk = $('#id_produk').val();
@@ -255,7 +308,43 @@
         }
     })
 
-    $('#btn_simpan_pembelian').click(function() {
+
+    $('#simpan_pembelian').click(function() {
+        let id_pembelian = '<?= $pembelian['id'] ?>'
+        $.ajax({
+            type: "post",
+            url: "<?= base_url() ?>/simpan_pembelian",
+            data: 'id_pembelian=' + id_pembelian +
+                '&no_pembelian=' + $('#no_pembelian').val() +
+                '&tanggal=' + $('#tanggal').val() +
+                '&id_supplier=' + $('#supplier').val() +
+                '&id_gudang=' + $('#gudang').val() +
+                '&panjang=' + $('#panjang').val() +
+                '&lebar=' + $('#lebar').val() +
+                '&tinggi=' + $('#tinggi').val() +
+                '&berat=' + $('#berat').val() +
+                '&carton_koli=' + $('#carton_koli').val() +
+                '&catatan=' + $('#catatan').val(),
+            dataType: "json",
+            success: function(response) {
+                if (response.ok) {
+                    location.href = '<?= site_url() ?>fixing_pemesanan'
+                } else {
+                    Swal.fire(
+                        'Opss.',
+                        'Terjadi kesalahan, hubungi IT Support',
+                        'error'
+                    )
+                }
+            },
+            error: function(e) {
+                alert('Error \n' + e.responseText);
+            }
+        });
+    })
+
+
+    $('#buat_pembelian').click(function() {
         if ($('#gudang').val() == '') {
             $('#gudang').removeClass('is-valid');
             $('#gudang').addClass('is-invalid');
@@ -307,11 +396,12 @@
         }
 
         if ($('#gudang').val() != '' && $('#dimensi').val() != '' && $('#berat').val() != '' && $('#carton_koli').val() != '' && $('#catatan').val() != '') {
-            simpan_pembelian();
+            buat_pembelian();
         }
     })
 
-    function simpan_pembelian() {
+
+    function buat_pembelian() {
         let id_pembelian = '<?= $pembelian['id'] ?>'
         $.ajax({
             type: "post",
@@ -322,7 +412,7 @@
                 if (response.ok) {
                     Swal.fire({
                         title: 'Konfirmasi?',
-                        text: "Apakah yakin menyimpan pembelian?",
+                        text: "Apakah yakin buat pembelian?",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',

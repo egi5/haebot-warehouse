@@ -11,7 +11,7 @@ use CodeIgniter\RESTful\ResourcePresenter;
 
 class Pemesanan_detail extends ResourcePresenter
 {
-    protected $helpers = ['user_admin_helper'];
+    protected $helpers = ['user_admin_helper', 'nomor_auto_helper'];
 
 
     public function List_pemesanan($no_pemesanan)
@@ -162,22 +162,63 @@ class Pemesanan_detail extends ResourcePresenter
     }
 
 
-    public function check_list_produk()
+    public function gantiNoPemesanan()
     {
-        $id_pemesanan = $this->request->getVar('id_pemesanan');
-        $modelPemesananDetail = new PemesananDetailModel();
-        $produk = $modelPemesananDetail->where(['id_pemesanan' => $id_pemesanan])->findAll();
+        if ($this->request->isAJAX()) {
+            $tanggal = $this->request->getVar('tanggal');
 
-        if ($produk) {
-            $json = ['ok' => 'ok'];
+            $json = [
+                'no_pemesanan'  => nomor_pemesanan_auto($tanggal)
+            ];
+
+            echo json_encode($json);
         } else {
-            $json = ['null' => null];
+            return 'Tidak bisa load';
         }
-        echo json_encode($json);
     }
 
 
-    public function kirim_pemesanan()
+    public function checkListProduk()
+    {
+        if ($this->request->isAJAX()) {
+            $id_pemesanan = $this->request->getVar('id_pemesanan');
+            $modelPemesananDetail = new PemesananDetailModel();
+            $produk = $modelPemesananDetail->where(['id_pemesanan' => $id_pemesanan])->findAll();
+
+            if ($produk) {
+                $json = ['ok' => 'ok'];
+            } else {
+                $json = ['null' => null];
+            }
+            echo json_encode($json);
+        } else {
+            return 'Tidak bisa load';
+        }
+    }
+
+
+    public function simpanPemesanan()
+    {
+        if ($this->request->isAJAX()) {
+            $modelPemesanan = new PemesananModel();
+
+            $data_update = [
+                'id'                    => $this->request->getVar('id_pemesanan'),
+                'no_pemesanan'          => $this->request->getVar('no_pemesanan'),
+                'id_supplier'           => $this->request->getVar('id_supplier'),
+                'tanggal'               => $this->request->getVar('tanggal'),
+            ];
+            $modelPemesanan->save($data_update);
+
+            $json = ['ok' => 'ok'];
+            echo json_encode($json);
+        } else {
+            return 'Tidak bisa load';
+        }
+    }
+
+
+    public function kirimPemesanan()
     {
         $id_pemesanan = $this->request->getVar('id_pemesanan');
 
@@ -190,8 +231,10 @@ class Pemesanan_detail extends ResourcePresenter
         $data_update = [
             'id'                    => $pemesanan['id'],
             'id_supplier'           => $this->request->getVar('supplier'),
+            'no_pemesanan'          => $this->request->getVar('no_pemesanan'),
             'id_user'               => $this->request->getVar('id_user'),
             'total_harga_produk'    => $sum['total_harga'],
+            'tanggal'               => $this->request->getVar('tanggal'),
             'status'                => 'Ordered'
         ];
         $modelPemesanan->save($data_update);

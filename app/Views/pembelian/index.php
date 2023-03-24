@@ -113,24 +113,6 @@
             }
         })
     }
-
-
-    function confirm_delete(id) {
-        Swal.fire({
-            title: 'Konfirmasi?',
-            text: "Apakah yakin menghapus data pembelian ini?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, hapus!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $('#form_delete').attr('action', '<?= site_url() ?>pembelian/' + id);
-                $('#form_delete').submit();
-            }
-        })
-    }
 </script>
 
 <?= $this->endSection() ?>

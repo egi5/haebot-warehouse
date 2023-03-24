@@ -18,10 +18,10 @@
             <thead>
                 <tr>
                     <th class="text-center" width="5%">No</th>
-                    <th class="text-center" width="13%">Nomor</th>
+                    <th class="text-center" width="13%">No Pemesanan</th>
                     <th class="text-center" width="12%">Tanggal</th>
                     <th class="text-center" width="30%">Supplier</th>
-                    <th class="text-center" width="15%">Total</th>
+                    <th class="text-center" width="15%">Admin</th>
                     <th class="text-center" width="15%">Status</th>
                     <th class="text-center" width="10%">Aksi</th>
                 </tr>
@@ -57,10 +57,7 @@
                     data: 'supplier'
                 },
                 {
-                    data: 'total_harga_produk',
-                    render: function(data, type, row) {
-                        return 'Rp ' + data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
-                    }
+                    data: 'admin'
                 },
                 {
                     data: 'status'
@@ -73,6 +70,57 @@
             ]
         });
     });
+
+
+    function confirm_delete(id) {
+        Swal.fire({
+            title: 'Konfirmasi?',
+            text: "Apakah yakin menghapus data pembelian ini?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const {
+                    value: text
+                } = await Swal.fire({
+                    input: 'textarea',
+                    inputLabel: 'Message',
+                    inputPlaceholder: 'Type your message here...',
+                    inputAttributes: {
+                        'aria-label': 'Type your message here'
+                    },
+                    showCancelButton: true
+                })
+
+                if (text) {
+                    $.ajax({
+                        type: "post",
+                        url: "<?= base_url() ?>/alasan_hapus_pemesanan",
+                        data: 'text=' + text,
+                        dataType: "json",
+                        success: function(response) {
+                            if (response.ok) {
+                                $('#form_delete').attr('action', '<?= site_url() ?>pembelian/' + id);
+                                $('#form_delete').submit();
+                            } else {
+                                Swal.fire(
+                                    'Opss.',
+                                    'Terjadi kesalahan, hubungi IT Support',
+                                    'error'
+                                )
+                            }
+                        },
+                        error: function(e) {
+                            alert('Error \n' + e.responseText);
+                        }
+                    });
+                }
+            }
+        })
+    }
 </script>
 
 <?= $this->endSection() ?>

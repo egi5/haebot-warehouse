@@ -62,7 +62,8 @@ class PembelianModel extends Model
     public function getPembelian($no)
     {
         $data =  $this->db->table($this->table)
-            ->select('pembelian.*, supplier.nama as supplier, gudang.nama as gudang, karyawan.nama_lengkap as admin')
+            ->select('pembelian.*, supplier.nama as supplier, gudang.nama as gudang, karyawan.nama_lengkap as admin, pemesanan.no_pemesanan')
+            ->join('pemesanan', 'pembelian.id_pemesanan = pemesanan.id', 'left')
             ->join('supplier', 'pembelian.id_supplier = supplier.id', 'left')
             ->join('gudang', 'pembelian.id_gudang = gudang.id', 'left')
             ->join('users', 'pembelian.id_user = users.id', 'left')

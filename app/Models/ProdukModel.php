@@ -66,6 +66,7 @@ class ProdukModel extends Model
             ->join('produk', 'pembelian_detail.id_produk = produk.id', 'left')
             ->join('pembelian', 'pembelian.id = pembelian_detail.id_pembelian')
             ->where('pembelian.id_supplier', $id_supplier)
+            ->where('pembelian.status', 'sampai')
             ->orderBy('pembelian.id', 'desc')
             ->get()
             ->getResultArray();

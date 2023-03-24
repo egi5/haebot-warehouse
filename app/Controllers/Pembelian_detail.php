@@ -6,15 +6,18 @@ use App\Models\GudangModel;
 use App\Models\PembelianDetailModel;
 use App\Models\PembelianModel;
 use App\Models\ProdukModel;
+use App\Models\SupplierModel;
 use CodeIgniter\RESTful\ResourcePresenter;
 
 class Pembelian_detail extends ResourcePresenter
 {
-    protected $helpers = ['user_admin_helper'];
+    protected $helpers = ['user_admin_helper', 'nomor_auto_helper'];
 
 
     public function List_pembelian($no_pembelian)
     {
+        $modelSupplier = new SupplierModel();
+        $supplier = $modelSupplier->findAll();
         $modelProduk = new ProdukModel();
         $produk = $modelProduk->findAll();
         $modelGudang = new GudangModel();
@@ -23,6 +26,7 @@ class Pembelian_detail extends ResourcePresenter
         $pembelianModel = new PembelianModel();
         $data = [
             'pembelian'             => $pembelianModel->getPembelian($no_pembelian),
+            'supplier'              => $supplier,
             'produk'                => $produk,
             'gudang'                => $gudang,
         ];
@@ -55,6 +59,22 @@ class Pembelian_detail extends ResourcePresenter
                     'list' => '<tr><td colspan="7" class="text-center">Belum ada list Produk.</td></tr>',
                 ];
             }
+
+            echo json_encode($json);
+        } else {
+            return 'Tidak bisa load';
+        }
+    }
+
+
+    public function gantiNoPembelian()
+    {
+        if ($this->request->isAJAX()) {
+            $tanggal = $this->request->getVar('tanggal');
+
+            $json = [
+                'no_pembelian'  => nomor_pembelian_auto($tanggal)
+            ];
 
             echo json_encode($json);
         } else {

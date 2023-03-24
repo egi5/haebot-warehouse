@@ -28,29 +28,16 @@ class Pembelian extends ResourcePresenter
                 ->select('pembelian.id, pembelian.no_pembelian, pembelian.tanggal, supplier.nama as supplier, pembelian.total_harga_produk, pembelian.status, pembelian.status_pembayaran')
                 ->join('supplier', 'pembelian.id_supplier = supplier.id', 'left')
                 ->where('pembelian.deleted_at', null)
+                ->where('pembelian.status !=', 'fixing')
                 ->orderBy('pembelian.id', 'desc');
 
             return DataTable::of($data)
                 ->addNumbering('no')
                 ->add('aksi', function ($row) {
-                    if ($row->status == 'Belum Fixing') {
-                        return '
-                            <a title="Edit Pembelian" class="px-2 py-0 btn btn-sm btn-outline-primary" href="' . base_url() . '/list_pembelian/' . $row->no_pembelian . '">
-                                <i class="fa-fw fa-solid fa-circle-arrow-right"></i>
-                            </a>
-
-                            <form id="form_delete" method="POST" class="d-inline">
-                                ' . csrf_field() . '
-                                <input type="hidden" name="_method" value="DELETE">
-                            </form>
-                            <button onclick="confirm_delete(' . $row->id . ')" title="Hapus" type="button" class="px-2 py-0 btn btn-sm btn-outline-danger"><i class="fa-fw fa-solid fa-trash"></i></button>
-                            ';
-                    } else {
-                        return '
+                    return '
                             <a title="Detail" class="px-2 py-0 btn btn-sm btn-outline-dark" onclick="showModalDetail(\'' . $row->no_pembelian . '\')">
                                 <i class="fa-fw fa-solid fa-magnifying-glass"></i>
                             </a>';
-                    }
                 }, 'last')
                 ->toJson(true);
         } else {
@@ -100,9 +87,8 @@ class Pembelian extends ResourcePresenter
             'id_user'               => $pemesanan['id_user'],
             'no_pembelian'          => $no_pembelian,
             'tanggal'               => date('Y-m-d'),
-            'origin'                => $pemesanan['origin'],
             'total_harga_produk'    => $pemesanan['total_harga_produk'],
-            'status'                => 'Belum Fixing',
+            'status'                => 'Fixing',
         ];
         $modelPembelian->save($data);
         $id_pembelian = $modelPembelian->getInsertID();
@@ -121,7 +107,7 @@ class Pembelian extends ResourcePresenter
 
         $data_update_pemesanan = [
             'id'                    => $pemesanan['id'],
-            'status'                => 'Pembelian'
+            'status'                => 'Fixing'
         ];
         $modelPemesanan->save($data_update_pemesanan);
 
@@ -129,7 +115,7 @@ class Pembelian extends ResourcePresenter
     }
 
 
-    public function check_produk_pembelian()
+    public function checkProdukPembelian()
     {
         $id_pembelian = $this->request->getVar('id_pembelian');
         $modelPembelianDetail = new PembelianDetailModel();
@@ -144,11 +130,48 @@ class Pembelian extends ResourcePresenter
     }
 
 
-    public function simpan_pembelian()
+    public function simpanPembelian()
+    {
+        if ($this->request->isAJAX()) {
+            $modelPembelian = new PembelianModel();
+            $modelPemesanan = new PemesananModel();
+
+            $data_update_pembelian = [
+                'id'                    => $this->request->getVar('id_pembelian'),
+                'id_supplier'           => $this->request->getVar('id_supplier'),
+                'id_gudang'             => $this->request->getVar('id_gudang'),
+                'no_pembelian'          => $this->request->getVar('no_pembelian'),
+                'tanggal'               => $this->request->getVar('tanggal'),
+                'panjang'               => $this->request->getVar('panjang'),
+                'lebar'                 => $this->request->getVar('lebar'),
+                'tinggi'                => $this->request->getVar('tinggi'),
+                'berat'                 => $this->request->getVar('berat'),
+                'carton_koli'           => $this->request->getVar('carton_koli'),
+                'catatan'               => $this->request->getVar('catatan'),
+            ];
+            $modelPembelian->save($data_update_pembelian);
+
+            $pembelian = $modelPembelian->find($this->request->getVar('id_pembelian'));
+            $data_update_pemesanan = [
+                'id'                    => $pembelian['id_pemesanan'],
+                'id_supplier'           => $this->request->getVar('id_supplier'),
+            ];
+            $modelPemesanan->save($data_update_pemesanan);
+
+            $json = ['ok' => 'ok'];
+            echo json_encode($json);
+        } else {
+            return 'Tidak bisa load';
+        }
+    }
+
+
+    public function buatPembelian()
     {
         date_default_timezone_set('Asia/Jakarta');
         $id_pembelian = $this->request->getVar('id_pembelian');
 
+        $modelPemesanan = new PemesananModel();
         $modelPembelian = new PembelianModel();
         $pembelian = $modelPembelian->find($id_pembelian);
 
@@ -158,6 +181,9 @@ class Pembelian extends ResourcePresenter
         $data_update = [
             'id'                    => $pembelian['id'],
             'id_user'               => $this->request->getVar('id_admin'),
+            'no_pembelian'          => $this->request->getVar('no_pembelian'),
+            'tanggal'               => $this->request->getVar('tanggal'),
+            'id_supplier'           => $this->request->getVar('supplier'),
             'id_gudang'             => $this->request->getVar('gudang'),
             'total_harga_produk'    => $sum['total_harga'],
             'panjang'               => $this->request->getVar('panjang'),
@@ -169,6 +195,13 @@ class Pembelian extends ResourcePresenter
             'status'                => 'Diproses'
         ];
         $modelPembelian->save($data_update);
+
+        $data_update_pemesanan = [
+            'id'                    => $pembelian['id_pemesanan'],
+            'id_supplier'           => $this->request->getVar('supplier'),
+            'status'                => 'Pembelian'
+        ];
+        $modelPemesanan->save($data_update_pemesanan);
 
         session()->setFlashdata('pesan', 'Berhasil membuat tagihan pembelian.');
         return redirect()->to('/pembelian');
@@ -184,11 +217,11 @@ class Pembelian extends ResourcePresenter
         $modelPembelianDetail->where(['id_pembelian' => $id])->delete();
 
         $modelPemesanan = new PemesananModel();
-        $pemesanan = $modelPemesanan->where(['id'=>$pembelian['id_pemesanan']])->first();
+        $pemesanan = $modelPemesanan->where(['id' => $pembelian['id_pemesanan']])->first();
         $modelPemesanan->save(
             [
                 'id' => $pemesanan['id'],
-                'status'=>'Dihapus',
+                'status' => 'Dihapus',
             ]
         );
 
