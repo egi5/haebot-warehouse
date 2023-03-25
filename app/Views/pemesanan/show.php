@@ -39,6 +39,17 @@
     </div>
 </div>
 
+<?php if ($pemesanan['status'] == 'Dihapus') { ?>
+    <div class="row mb-2">
+        <div class="col-md-3">
+            <div class="fw-bold">Alasan dihapus</div>
+        </div>
+        <div class="col-md-9">
+            <?= $pemesanan['alasan_dihapus'] ?>
+        </div>
+    </div>
+<?php } ?>
+
 <br>
 
 

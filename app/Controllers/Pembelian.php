@@ -88,6 +88,12 @@ class Pembelian extends ResourcePresenter
             'no_pembelian'          => $no_pembelian,
             'tanggal'               => date('Y-m-d'),
             'total_harga_produk'    => $pemesanan['total_harga_produk'],
+            'panjang'               => 1,
+            'lebar'                 => 1,
+            'tinggi'                => 1,
+            'berat'                 => 1,
+            'carton_koli'           => 1,
+            'catatan'               => '-',
             'status'                => 'Fixing',
         ];
         $modelPembelian->save($data);
@@ -213,11 +219,9 @@ class Pembelian extends ResourcePresenter
         $modelPembelian = new PembelianModel();
         $pembelian = $modelPembelian->find($id);
 
-        $modelPembelianDetail = new PembelianDetailModel();
-        $modelPembelianDetail->where(['id_pembelian' => $id])->delete();
-
         $modelPemesanan = new PemesananModel();
         $pemesanan = $modelPemesanan->where(['id' => $pembelian['id_pemesanan']])->first();
+
         $modelPemesanan->save(
             [
                 'id' => $pemesanan['id'],
@@ -225,9 +229,12 @@ class Pembelian extends ResourcePresenter
             ]
         );
 
+        $modelPembelianDetail = new PembelianDetailModel();
+        $modelPembelianDetail->where(['id_pembelian' => $id])->delete();
+
         $modelPembelian->delete($id);
 
-        session()->setFlashdata('pesan', 'Data pembelian berhasil dihapus.');
-        return redirect()->to('/pembelian');
+        session()->setFlashdata('pesan', 'Data berhasil dihapus.');
+        return redirect()->to('/fixing_pemesanan');
     }
 }

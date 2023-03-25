@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\PembelianModel;
 use App\Models\PemesananDetailModel;
 use App\Models\PemesananModel;
 use App\Models\SupplierModel;
@@ -26,7 +27,7 @@ class Pemesanan extends ResourcePresenter
             $data =  $db->table('pemesanan')
                 ->select('pemesanan.id, pemesanan.no_pemesanan, pemesanan.tanggal, supplier.nama as supplier, pemesanan.total_harga_produk, pemesanan.status')
                 ->join('supplier', 'pemesanan.id_supplier = supplier.id', 'left')
-                ->where('pemesanan.deleted_at', null)
+                // ->where('pemesanan.deleted_at', null)
                 ->orderBy('pemesanan.id', 'desc');
 
             return DataTable::of($data)
@@ -67,21 +68,17 @@ class Pemesanan extends ResourcePresenter
             $modelPemesanan = new PemesananModel();
             $pemesanan = $modelPemesanan->getPemesanan($no);
 
-            if ($pemesanan) {
-                $modelPemesananDetail = new PemesananDetailModel();
-                $pemesanan_detail = $modelPemesananDetail->getListProdukPemesanan($pemesanan['id']);
+            $modelPemesananDetail = new PemesananDetailModel();
+            $pemesanan_detail = $modelPemesananDetail->getListProdukPemesanan($pemesanan['id']);
 
-                $data = [
-                    'pemesanan' => $pemesanan,
-                    'pemesanan_detail' => $pemesanan_detail,
-                ];
+            $data = [
+                'pemesanan' => $pemesanan,
+                'pemesanan_detail' => $pemesanan_detail,
+            ];
 
-                $json = [
-                    'data' => view('pemesanan/show', $data),
-                ];
-            } else {
-                $json = [];
-            }
+            $json = [
+                'data' => view('pemesanan/show', $data),
+            ];
 
             echo json_encode($json);
         } else {
@@ -174,24 +171,49 @@ class Pemesanan extends ResourcePresenter
 
     public function alasanHapusPemesanan()
     {
-        $modelPemesanan = new PemesananModel();
+        if ($this->request->isAJAX()) {
+            $modelPemesanan = new PemesananModel();
+            $modelPembelian = new PembelianModel();
 
-        $data = [
-            'no_pemesanan'          => $this->request->getPost('no_pemesanan'),
-            'tanggal'               => $this->request->getPost('tanggal'),
-            'id_supplier'           => $this->request->getPost('id_supplier'),
-        ];
-        $modelPemesanan->save($data);
+            $data = [
+                'id'                => $this->request->getPost('id'),
+                'alasan_dihapus'    => $this->request->getPost('alasan_dihapus'),
+            ];
+            $modelPemesanan->save($data);
+
+            $pembelian = $modelPembelian->where(['id_pemesanan' => $this->request->getPost('id')])->first();
+
+            if ($pembelian) {
+                $json = [
+                    'ok' => 'ok',
+                    'id_pembelian' => $pembelian['id']
+                ];
+            } else {
+                $json = [
+                    'ok' => 'ok',
+                ];
+            }
+
+            echo json_encode($json);
+        } else {
+            return 'Tidak bisa load';
+        }
     }
 
 
     public function delete($id = null)
     {
-        $modelPemesananDetail = new PemesananDetailModel();
-        $modelPemesananDetail->where(['id_pemesanan' => $id])->delete();
+        // $modelPemesananDetail = new PemesananDetailModel();
+        // $modelPemesananDetail->where(['id_pemesanan' => $id])->delete();
 
         $modelPemesanan = new PemesananModel();
-        $modelPemesanan->delete($id);
+        $modelPemesanan->save(
+            [
+                'id' => $id,
+                'status' => 'Dihapus',
+            ]
+        );
+        // $modelPemesanan->delete($id);
 
         session()->setFlashdata('pesan', 'Data pemesanan berhasil dihapus.');
         return redirect()->to('/pemesanan');
@@ -237,7 +259,7 @@ class Pemesanan extends ResourcePresenter
                         <form action="' . site_url() . 'pembelian" method="POST" class="d-inline">
                             ' . csrf_field() . '
                             <input type="hidden" name="no_pemesanan" value="' . $row->no_pemesanan . '">
-                            <button title="Buat Pembelian" type="submit" class="px-2 py-0 btn btn-sm btn-outline-primary"><i class="fa-fw fa-solid fa-circle-arrow-right"></i></button>
+                            <button title="Buat Pembelian" type="submit" class="px-2 py-0 btn btn-sm btn-outline-success"><i class="fa-fw fa-solid fa-circle-arrow-right"></i></button>
                         </form>';
                     }
                 }, 'last')
@@ -312,7 +334,7 @@ class Pemesanan extends ResourcePresenter
                 $modelPemesanan = new PemesananModel();
                 $modelPemesananDetail = new PemesananDetailModel();
 
-                $pemesanan = $modelPemesanan->find($this->request->getPost('id_pemesanan'));
+                $pemesanan = $modelPemesanan->where(['id' => $this->request->getPost('id_pemesanan')])->first();
 
                 $data = [
                     'no_pemesanan'          => $this->request->getPost('no_pemesanan'),

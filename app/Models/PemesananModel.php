@@ -20,7 +20,8 @@ class PemesananModel extends Model
         'no_pemesanan',
         'tanggal',
         'total_harga_produk',
-        'status'
+        'status',
+        'alasan_dihapus'
     ];
 
     // Dates
@@ -55,7 +56,7 @@ class PemesananModel extends Model
             ->join('supplier', 'pemesanan.id_supplier = supplier.id', 'left')
             ->join('users', 'pemesanan.id_user = users.id', 'left')
             ->join('karyawan', 'users.id_karyawan = karyawan.id', 'left')
-            ->where('pemesanan.deleted_at', null)
+            // ->where('pemesanan.deleted_at', null)
             ->where('no_pemesanan', $no)
             ->get()
             ->getRowArray();

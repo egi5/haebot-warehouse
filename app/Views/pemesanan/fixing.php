@@ -37,6 +37,23 @@
 <?= $this->include('MyLayout/js') ?>
 
 <script>
+    // Bahan Alert
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        background: '#EC7063',
+        color: '#fff',
+        iconColor: '#fff',
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
+
     $(document).ready(function() {
         $('#tabel').DataTable({
             processing: true,
@@ -69,6 +86,16 @@
                 },
             ]
         });
+
+
+        // Alert
+        var op = <?= (!empty(session()->getFlashdata('pesan')) ? json_encode(session()->getFlashdata('pesan')) : '""'); ?>;
+        if (op != '') {
+            Toast.fire({
+                icon: 'success',
+                title: op
+            })
+        }
     });
 
 
@@ -87,23 +114,25 @@
                     value: text
                 } = await Swal.fire({
                     input: 'textarea',
-                    inputLabel: 'Message',
-                    inputPlaceholder: 'Type your message here...',
+                    inputLabel: 'Apa alasan menghapus data ini?',
+                    inputPlaceholder: '',
                     inputAttributes: {
-                        'aria-label': 'Type your message here'
+                        'aria-label': ''
                     },
-                    showCancelButton: true
+                    confirmButtonColor: '#3085d6',
+                    showCancelButton: true,
+                    cancelButtonColor: '#d33',
                 })
 
                 if (text) {
                     $.ajax({
                         type: "post",
-                        url: "<?= base_url() ?>/alasan_hapus_pemesanan",
-                        data: 'text=' + text,
+                        url: "<?= base_url() ?>alasan_hapus_pemesanan",
+                        data: 'id=' + id + '&alasan_dihapus=' + text,
                         dataType: "json",
                         success: function(response) {
                             if (response.ok) {
-                                $('#form_delete').attr('action', '<?= site_url() ?>pembelian/' + id);
+                                $('#form_delete').attr('action', '<?= site_url() ?>pembelian/' + response.id_pembelian);
                                 $('#form_delete').submit();
                             } else {
                                 Swal.fire(

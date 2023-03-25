@@ -12,7 +12,7 @@
     <div class="row mb-3">
         <label for="tanggal" class="col-sm-3 col-form-label">Tanggal</label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" id="tanggal" name="tanggal" value="<?= date('Y-m-d') ?>">
+            <input onchange="ganti_no_pemesanan()" type="text" class="form-control" id="tanggal" name="tanggal" value="<?= date('Y-m-d') ?>">
             <div class="invalid-feedback error-tanggal"></div>
         </div>
     </div>
@@ -93,6 +93,7 @@
         return false
     })
 
+
     $(document).ready(function() {
         $("#id_supplier").select2({
             theme: "bootstrap-5",
@@ -103,4 +104,29 @@
             format: "yyyy-mm-dd"
         });
     })
+
+
+    function ganti_no_pemesanan() {
+        let tanggal = $('#tanggal').val()
+        $.ajax({
+            type: "post",
+            url: "<?= base_url() ?>/ganti_no_pemesanan",
+            data: 'tanggal=' + tanggal,
+            dataType: "json",
+            success: function(response) {
+                if (response.no_pemesanan) {
+                    $('#no_pemesanan').val(response.no_pemesanan)
+                } else {
+                    Swal.fire(
+                        'Opss.',
+                        'Terjadi kesalahan, hubungi IT Support',
+                        'error'
+                    )
+                }
+            },
+            error: function(e) {
+                alert('Error \n' + e.responseText);
+            }
+        });
+    }
 </script>

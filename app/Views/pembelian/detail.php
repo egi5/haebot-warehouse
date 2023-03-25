@@ -310,6 +310,63 @@
 
 
     $('#simpan_pembelian').click(function() {
+        if ($('#gudang').val() == '') {
+            $('#gudang').removeClass('is-valid');
+            $('#gudang').addClass('is-invalid');
+        } else {
+            $('#gudang').addClass('is-valid');
+            $('#gudang').removeClass('is-invalid');
+        }
+        if ($('#panjang').val() == '') {
+            $('#panjang').removeClass('is-valid');
+            $('#panjang').addClass('is-invalid');
+        } else {
+            $('#panjang').addClass('is-valid');
+            $('#panjang').removeClass('is-invalid');
+        }
+        if ($('#lebar').val() == '') {
+            $('#lebar').removeClass('is-valid');
+            $('#lebar').addClass('is-invalid');
+        } else {
+            $('#lebar').addClass('is-valid');
+            $('#lebar').removeClass('is-invalid');
+        }
+        if ($('#tinggi').val() == '') {
+            $('#tinggi').removeClass('is-valid');
+            $('#tinggi').addClass('is-invalid');
+        } else {
+            $('#tinggi').addClass('is-valid');
+            $('#tinggi').removeClass('is-invalid');
+        }
+        if ($('#berat').val() == '') {
+            $('#berat').removeClass('is-valid');
+            $('#berat').addClass('is-invalid');
+        } else {
+            $('#berat').addClass('is-valid');
+            $('#berat').removeClass('is-invalid');
+        }
+        if ($('#carton_koli').val() == '') {
+            $('#carton_koli').removeClass('is-valid');
+            $('#carton_koli').addClass('is-invalid');
+        } else {
+            $('#carton_koli').addClass('is-valid');
+            $('#carton_koli').removeClass('is-invalid');
+        }
+        if ($('#catatan').val() == '') {
+            $('#catatan').removeClass('is-valid');
+            $('#catatan').addClass('is-invalid');
+        } else {
+            $('#catatan').addClass('is-valid');
+            $('#catatan').removeClass('is-invalid');
+        }
+
+        if ($('#gudang').val() != '' && $('#dimensi').val() != '' && $('#berat').val() != '' && $('#carton_koli').val() != '' && $('#catatan').val() != '') {
+            simpan_pembelian();
+        }
+    })
+
+
+    function simpan_pembelian() {
         let id_pembelian = '<?= $pembelian['id'] ?>'
         $.ajax({
             type: "post",
@@ -341,7 +398,7 @@
                 alert('Error \n' + e.responseText);
             }
         });
-    })
+    }
 
 
     $('#buat_pembelian').click(function() {

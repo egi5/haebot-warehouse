@@ -56,28 +56,26 @@
 <form autocomplete="off" class="row g-3 mt-2" action="<?= site_url() ?>save_repeat_pemesanan" method="POST" id="form">
 
     <?= csrf_field() ?>
-<div class="row mb-3 mt-4">
-    <label for="no_pemesanan" class="col-sm-3 col-form-label">Nomor Pemesanan</label>
+    <div class="row mb-3 mt-4">
+        <label for="no_pemesanan" class="col-sm-3 col-form-label">Nomor Pemesanan</label>
         <div class="col-sm-9">
             <input type="text" class="form-control" id="no_pemesanan" name="no_pemesanan" value="<?= $nomor_pemesanan_auto ?>">
             <div class="invalid-feedback error-no_pemesanan"></div>
         </div>
-</div>
-<div class="row mb-3">
+    </div>
+    <div class="row mb-3">
         <label for="tanggal" class="col-sm-3 col-form-label">Tanggal</label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" id="tanggal" name="tanggal" value="<?= date('Y-m-d') ?>">
+            <input onchange="ganti_no_pemesanan()" type="text" class="form-control" id="tanggal" name="tanggal" value="<?= date('Y-m-d') ?>">
             <div class="invalid-feedback error-tanggal"></div>
         </div>
     </div>
-    <input type="hidden" name="id_pemesanan" value="<?= $pemesanan['id']?>">
-
-    
+    <input type="hidden" name="id_pemesanan" value="<?= $pemesanan['id'] ?>">
 
     <div class="text-center mb-3">
         <button id="tombolSimpan" class="btn px-5 btn-outline-primary" type="submit">Buat Pemesanan <i class="fa-fw fa-solid fa-arrow-right"></i></button>
     </div>
-    
+
 </form>
 
 
@@ -130,9 +128,35 @@
         return false
     })
 
+
     $(document).ready(function() {
         $('#tanggal').datepicker({
             format: "yyyy-mm-dd"
         });
     })
+
+
+    function ganti_no_pemesanan() {
+        let tanggal = $('#tanggal').val()
+        $.ajax({
+            type: "post",
+            url: "<?= base_url() ?>/ganti_no_pemesanan",
+            data: 'tanggal=' + tanggal,
+            dataType: "json",
+            success: function(response) {
+                if (response.no_pemesanan) {
+                    $('#no_pemesanan').val(response.no_pemesanan)
+                } else {
+                    Swal.fire(
+                        'Opss.',
+                        'Terjadi kesalahan, hubungi IT Support',
+                        'error'
+                    )
+                }
+            },
+            error: function(e) {
+                alert('Error \n' + e.responseText);
+            }
+        });
+    }
 </script>

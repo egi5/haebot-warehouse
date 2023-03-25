@@ -179,16 +179,51 @@
     function confirm_delete(id) {
         Swal.fire({
             title: 'Konfirmasi?',
-            text: "Apakah yakin menghapus pemesanan ini?",
+            text: "Apakah yakin menghapus data pembelian ini?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Ya, hapus!'
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                $('#form_delete').attr('action', '<?= site_url() ?>pemesanan/' + id);
-                $('#form_delete').submit();
+                const {
+                    value: text
+                } = await Swal.fire({
+                    input: 'textarea',
+                    inputLabel: 'Apa alasan menghapus data ini?',
+                    inputPlaceholder: '',
+                    inputAttributes: {
+                        'aria-label': ''
+                    },
+                    confirmButtonColor: '#3085d6',
+                    showCancelButton: true,
+                    cancelButtonColor: '#d33',
+                })
+
+                if (text) {
+                    $.ajax({
+                        type: "post",
+                        url: "<?= base_url() ?>alasan_hapus_pemesanan",
+                        data: 'id=' + id + '&alasan_dihapus=' + text,
+                        dataType: "json",
+                        success: function(response) {
+                            if (response.ok) {
+                                $('#form_delete').attr('action', '<?= site_url() ?>pemesanan/' + id);
+                                $('#form_delete').submit();
+                            } else {
+                                Swal.fire(
+                                    'Opss.',
+                                    'Terjadi kesalahan, hubungi IT Support',
+                                    'error'
+                                )
+                            }
+                        },
+                        error: function(e) {
+                            alert('Error \n' + e.responseText);
+                        }
+                    });
+                }
             }
         })
     }
