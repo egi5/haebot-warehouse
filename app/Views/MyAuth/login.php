@@ -28,7 +28,7 @@
                                 <div class="card-header">
                                     <!-- <img src="<?= base_url() ?>assets/logo/logo-haebot.jpg" alt=""> -->
                                     <!-- <h3 class="text-center font-weight-light my-4">Login</h3> -->
-                                    <h3 class="text-center font-weight-light my-3"> <b class="text-secondary"> Purchase </b> <br> <?= lang('Auth.loginTitle') ?> </h3>
+                                    <h3 class="text-center font-weight-light my-3"> <b class="text-secondary"> Warehouse </b> <br> <?= lang('Auth.loginTitle') ?> </h3>
                                 </div>
 
                                 <div class="m-3 mb-0">

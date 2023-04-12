@@ -17,7 +17,7 @@
                     </a>
                 <?php endif; ?>
 
-                <?php if (has_permission('Data Master')) : ?>
+                <?php if (has_permission('Penanggung Jawab Gudang')) : ?>
                     <a class="nav-link" href="<?= base_url() ?>produk">
                         <div class="sb-nav-link-icon">
                             <i class="fa-fw fa-solid fa-fax"></i>
@@ -26,45 +26,12 @@
                     </a>
                 <?php endif; ?>
 
-                <?php if (has_permission('Data Master')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>supplier">
+                <?php if (has_permission('Penanggung Jawab Gudang')) : ?>
+                    <a class="nav-link" href="<?= base_url() ?>produk">
                         <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-solid fa-handshake-simple"></i>
+                            <i class="fa-fw fa-solid fa-fax"></i>
                         </div>
-                        Supplier
-                    </a>
-                <?php endif; ?>
-
-                <br>
-
-                <?php if (has_permission('Dashboard') || has_permission('pembelian')) : ?>
-                    <small class="my-0 ms-3 text-secondary">Purchase</small>
-                <?php endif; ?>
-
-                <?php if (has_permission('pembelian')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>pemesanan">
-                        <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-regular fa-rectangle-list"></i>
-                        </div>
-                        Plan Pemesanan
-                    </a>
-                <?php endif; ?>
-
-                <?php if (has_permission('pembelian')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>fixing_pemesanan">
-                        <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-solid fa-list-check"></i>
-                        </div>
-                        Fixing Plan Pemesanan
-                    </a>
-                <?php endif; ?>
-
-                <?php if (has_permission('pembelian')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>pembelian">
-                        <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-solid fa-bars"></i>
-                        </div>
-                        Data Pembelian
+                        Ruangan & Rak
                     </a>
                 <?php endif; ?>
 
