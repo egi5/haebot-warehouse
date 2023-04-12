@@ -4,7 +4,7 @@
             <div class="nav">
                 <br>
 
-                <?php if (has_permission('Dashboard') || has_permission('pembelian')) : ?>
+                <?php if (has_permission('Dashboard') || has_permission('Penanggung Jawab Gudang')) : ?>
                     <small class="my-0 ms-3 text-secondary">Data</small>
                 <?php endif; ?>
 

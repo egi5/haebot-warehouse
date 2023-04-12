@@ -41,56 +41,14 @@ $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
     $routes->get('/wilayah/kecamatan_by_kota', 'GetWilayah::KecamatanByKota');
     $routes->get('/wilayah/kelurahan_by_kecamatan', 'GetWilayah::KelurahanByKecamatan');
 
-    // Supplier
-    $routes->get('supplier', 'Supplier::index', ['filter' => 'permission:Data Master']);
-    $routes->get('supplier/(:num)', 'Supplier::show/$1', ['filter' => 'permission:Data Master']);
-    $routes->post('supplier', 'Supplier::create', ['filter' => 'permission:Data Master,Admin Supplier']);
-    $routes->get('supplier/new', 'Supplier::new', ['filter' => 'permission:Data Master,Admin Supplier']);
-    $routes->get('supplier/(:num)/edit', 'Supplier::edit/$1', ['filter' => 'permission:Data Master,Admin Supplier']);
-    $routes->put('supplier/(:num)', 'Supplier::update/$1  ', ['filter' => 'permission:Data Master,Admin Supplier']);
-    // $routes->delete('supplier/(:num) ', 'Supplier::delete/$1', ['filter' => 'permission:Data Master,Admin Supplier']);
-    $routes->resource('supplier', ['filter' => 'permission:Data Master']);
-    $routes->resource('supplierpj', ['filter' => 'permission:Data Master']);
-    $routes->resource('supplieralamat', ['filter' => 'permission:Data Master']);
-    $routes->resource('supplierlink', ['filter' => 'permission:Data Master']);
-    $routes->resource('suppliercs', ['filter' => 'permission:Data Master']);
 
     // Produk
-    $routes->resource('produk', ['filter' => 'permission:Data Master']);
-    $routes->get('getdataproduk', 'Produk::getDataProduk', ['filter' => 'permission:Data Master']);
-    $routes->post('produkplan', 'ProdukPlan::create', ['filter' => 'permission:Data Master']);
+    $routes->resource('produk', ['filter' => 'permission:Data Master,Penanggung Jawab Gudang']);
+    $routes->get('getdataproduk', 'Produk::getDataProduk', ['filter' => 'permission:Data Master,Penanggung Jawab Gudang']);
+    $routes->post('produkplan', 'ProdukPlan::create', ['filter' => 'permission:Data Master,Penanggung Jawab Gudang']);
 
-    // Pemesanan
-    $routes->resource('pemesanan', ['filter' => 'permission:Pembelian']);
-    $routes->get('get_produk_add_list/(:any)', 'Pemesanan_detail::getProdukForAddList/$1', ['filter' => 'permission:Pembelian']);
-    $routes->post('find_produk_by_nama_sku', 'Pemesanan_detail::findProdukByNamaSKU', ['filter' => 'permission:Pembelian']);
-    $routes->get('getdatapemesanan', 'Pemesanan::getDataPemesanan', ['filter' => 'permission:Pembelian']);
-    $routes->get('list_pemesanan/(:any)', 'Pemesanan_detail::List_pemesanan/$1', ['filter' => 'permission:Pembelian']);
-    $routes->post('ganti_no_pemesanan', 'Pemesanan_detail::gantiNoPemesanan', ['filter' => 'permission:Pembelian']);
-    $routes->post('simpan_pemesanan', 'Pemesanan_detail::simpanPemesanan', ['filter' => 'permission:Pembelian']);
-    $routes->post('kirim_pemesanan', 'Pemesanan_detail::kirimPemesanan', ['filter' => 'permission:Pembelian']);
-    $routes->post('produks_pemesanan', 'Pemesanan_detail::getListProdukPemesanan', ['filter' => 'permission:Pembelian']);
-    $routes->post('check_list_produk', 'Pemesanan_detail::checkListProduk', ['filter' => 'permission:Pembelian']);
-    $routes->get('repeat_pemesanan/(:any)', 'Pemesanan::repeatPemesanan/$1', ['filter' => 'permission:Pembelian']);
-    $routes->post('save_repeat_pemesanan', 'Pemesanan::saveRepeat', ['filter' => 'permission:Pembelian']);
-    $routes->post('alasan_hapus_pemesanan', 'Pemesanan::alasanHapusPemesanan', ['filter' => 'permission:Pembelian']);
-    $routes->resource('pemesanan_detail', ['filter' => 'permission:Pembelian']);
-
-    // Fixing Pembelian
-    $routes->get('fixing_pemesanan', 'Pemesanan::fixingPemesanan', ['filter' => 'permission:Pembelian']);
-    $routes->get('get_pemesanan_ordered', 'Pemesanan::getDataPemesananOrdered', ['filter' => 'permission:Pembelian']);
-    $routes->get('list_pembelian/(:any)', 'Pembelian_detail::List_pembelian/$1', ['filter' => 'permission:Pembelian']);
-    $routes->post('produks_pembelian', 'Pembelian_detail::getListProdukPembelian', ['filter' => 'permission:Pembelian']);
-    $routes->post('ganti_no_pembelian', 'Pembelian_detail::gantiNoPembelian', ['filter' => 'permission:Pembelian']);
-    $routes->resource('pembelian_detail', ['filter' => 'permission:Pembelian']);
-
-    // Pembelian
-    $routes->resource('pembelian', ['filter' => 'permission:Pembelian']);
-    $routes->get('get_data_pembelian', 'Pembelian::getDataPembelian', ['filter' => 'permission:Pembelian']);
-    $routes->get('show_data_pembelian/(:any)', 'Pembelian::show/$1', ['filter' => 'permission:Pembelian']);
-    $routes->post('check_produk_pembelian', 'Pembelian::checkProdukPembelian', ['filter' => 'permission:Pembelian']);
-    $routes->post('simpan_pembelian', 'Pembelian::simpanPembelian', ['filter' => 'permission:Pembelian']);
-    $routes->post('buat_pembelian', 'Pembelian::buatPembelian', ['filter' => 'permission:Pembelian']);
+    // coba get id_gudang dari id_user
+    $routes->get('cari-id-gudang', 'Produk::getIdGudang', ['filter' => 'permission:Data Master,Penanggung Jawab Gudang']);
 });
 
 /*

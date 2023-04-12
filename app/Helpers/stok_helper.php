@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\GudangPJModel;
 use App\Models\ProdukModel;
 use App\Models\ProdukPlanModel;
 
@@ -49,4 +50,11 @@ function hitung_virtual_stok_dari_set($id)
     }
 
     return $produk_plan;
+}
+
+
+function getIdGudangByIdUser($id_user)
+{
+    $modelGudangPJ = new GudangPJModel();
+    return $modelGudangPJ->getGudangByPJ($id_user);
 }

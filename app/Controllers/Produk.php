@@ -146,4 +146,12 @@ class Produk extends ResourcePresenter
             return 'Tidak bisa load';
         }
     }
+
+
+    public function getIdGudang()
+    {
+        $gudangPJ = getIdGudangByIdUser(user()->id);
+
+        dd($gudangPJ);
+    }
 }
