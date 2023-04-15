@@ -27,9 +27,9 @@
                 <?php endif; ?>
 
                 <?php if (has_permission('Penanggung Jawab Gudang')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>produk">
+                    <a class="nav-link" href="<?= base_url() ?>ruanganRak">
                         <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-solid fa-fax"></i>
+                            <i class="fa-fw fa-solid fa-warehouse"></i>
                         </div>
                         Ruangan & Rak
                     </a>

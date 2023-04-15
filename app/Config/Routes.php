@@ -35,6 +35,9 @@ $routes->get('/', 'AuthController::login');
 $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
 
     $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'permission:Dashboard']);
+    $routes->get('ruanganRak', 'Menu::RuanganRak');
+    $routes->get('ruangan', 'Ruangan::index');
+    $routes->get('rak', 'Rak::index');
 
     // GetData
     $routes->get('/wilayah/kota_by_provinsi', 'GetWilayah::KotaByProvinsi');
@@ -49,6 +52,15 @@ $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
 
     // coba get id_gudang dari id_user
     $routes->get('cari-id-gudang', 'Produk::getIdGudang', ['filter' => 'permission:Data Master,Penanggung Jawab Gudang']);
+
+    // Ruangan
+    $routes->resource('ruangan');
+    $routes->get('getdataruangan', 'Ruangan::getDataRuangan');
+
+    // Rak
+    $routes->resource('rak');
+    $routes->get('getdatarak', 'Rak::getDataRak');
+    
 });
 
 /*
