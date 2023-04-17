@@ -7,16 +7,21 @@
 
     <div class="d-flex mb-0">
         <div class="me-auto mb-1">
-            <h3 style="color: #566573;">Data Ruangan</h3>
+            <h3 style="color: #566573;">Data Produk</h3>
         </div>
         <div class="me-2 mb-1">
-            <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>produkruangan">
+            <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>ruanganRak">
                 <i class="fa-fw fa-solid fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+        <div class="me-2 mb-1">
+            <a class="btn btn-sm btn-outline-danger" href="<?= site_url() ?>rak">
+                <i class="fa-fw fa-solid fa-gear"></i> Master Rak
             </a>
         </div>
         <div class="mb-1">
             <a class="btn btn-sm btn-outline-secondary mb-3" id="tombolTambah">
-                <i class="fa-fw fa-solid fa-plus"></i> Tambah Ruangan
+                <i class="fa-fw fa-solid fa-plus"></i> Tambah Produk
             </a>
         </div>
     </div>
@@ -28,9 +33,10 @@
             <thead>
                 <tr>
                     <th class="text-center" width="5%">No</th>
-                    <th class="text-center" width="15%">Kode</th>
-                    <th class="text-center" width="25%">Nama</th>
-                    <th class="text-center" width="10%">Aksi</th>
+                    <th class="text-center" width="20%">Rak</th>
+                    <th class="text-center" width="20%">Ruangan</th>
+                    <th class="text-center" width="20%">Produk</th>
+                    <th class="text-center" width="5%">Stok</th>
                 </tr>
             </thead>
             <tbody>
@@ -84,22 +90,23 @@
         $('#tabel').DataTable({
             processing: true,
             serverSide: true,
-            ajax: '<?= site_url() ?>getdataruangan',
+            ajax: '<?= site_url() ?>getdatarakproduk',
             order: [],
             columns: [{
                     data: 'no',
                     orderable: false
                 },
                 {
-                    data: 'kode'
+                    data: 'rak'
                 },
                 {
-                    data: 'nama'
+                    data: 'ruangan'
                 },
                 {
-                    data: 'aksi',
-                    orderable: false,
-                    className: 'text-center'
+                    data: 'produk'
+                },
+                {
+                    data: 'stok'
                 },
             ]
         });
@@ -124,13 +131,13 @@
     function showModalTambah() {
         $.ajax({
             type: 'GET',
-            url: '<?= site_url() ?>ruangan/new',
+            url: '<?= site_url() ?>lokasiproduk/new',
             dataType: 'json',
             success: function(res) {
                 if (res.data) {
                     $('#isiForm').html(res.data)
                     $('#my-modal').modal('toggle')
-                    $('#judulModal').html('Tambah Ruangan')
+                    $('#judulModal').html('Tambah Produk')
                 }
             },
             error: function(e) {
@@ -139,45 +146,6 @@
         })
     }
 
-
-    function confirm_delete(id) {
-        Swal.fire({
-            backdrop: false,
-            title: 'Konfirmasi?',
-            text: "Apakah yakin menghapus!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, hapus!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $('#form_delete').attr('action', '<?= site_url() ?>ruangan/' + id);
-                $('#form_delete').submit();
-            }
-        })
-    }
-
-
-    function showModalEdit(id) {
-        $.ajax({
-            type: 'GET',
-            url: '<?= site_url() ?>ruangan/' + id + '/edit',
-            dataType: 'json',
-            success: function(res) {
-                if (res.data) {
-                    $('#isiForm').html(res.data)
-                    $('#my-modal').modal('toggle')
-                    $('#judulModal').html('Edit Ruangan')
-                } else {
-                    console.log(res)
-                }
-            },
-            error: function(e) {
-                alert('Error \n' + e.responseText);
-            }
-        })
-    }
 </script>
 
 <?= $this->endSection() ?>

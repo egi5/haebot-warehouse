@@ -10,7 +10,7 @@
             <h3 style="color: #566573;">Data Rak</h3>
         </div>
         <div class="me-2 mb-1">
-            <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>ruanganRak">
+            <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>produkrak">
                 <i class="fa-fw fa-solid fa-arrow-left"></i> Kembali
             </a>
         </div>

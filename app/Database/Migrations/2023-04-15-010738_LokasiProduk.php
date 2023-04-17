@@ -18,10 +18,10 @@ class LokasiProduk extends Migration
         ];
         $this->forge->addField($fields);
         $this->forge->addKey('id', true);
-        $this->forge->addForeignKey('id_produk', 'gudang', 'id', '', 'CASCADE');
+        $this->forge->addForeignKey('id_produk', 'produk', 'id', '', 'CASCADE');
         $this->forge->addForeignKey('id_gudang', 'gudang', 'id', '', 'CASCADE');
         $this->forge->addForeignKey('id_ruangan', 'ruangan', 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('id_rak', 'ruangan', 'id', '', 'CASCADE');
+        $this->forge->addForeignKey('id_rak', 'rak', 'id', '', 'CASCADE');
         $this->forge->createTable('lokasi_produk', true);
     }
 
