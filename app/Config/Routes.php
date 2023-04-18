@@ -37,7 +37,9 @@ $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
     $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'permission:Dashboard']);
     $routes->get('ruanganRak', 'Menu::RuanganRak');
     $routes->get('ruangan', 'Ruangan::index');
+    $routes->get('produkruangan', 'LokasiProduk::indexRuangan');
     $routes->get('rak', 'Rak::index');
+    $routes->get('produkrak', 'LokasiProduk::indexRak');
 
     // GetData
     $routes->get('/wilayah/kota_by_provinsi', 'GetWilayah::KotaByProvinsi');
@@ -56,10 +58,21 @@ $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
     // Ruangan
     $routes->resource('ruangan');
     $routes->get('getdataruangan', 'Ruangan::getDataRuangan');
+    
 
     // Rak
     $routes->resource('rak');
     $routes->get('getdatarak', 'Rak::getDataRak');
+
+    // Lokasi Produk
+    $routes->get('getdataruanganproduk', 'LokasiProduk::getDataRuanganProduk');
+    $routes->get('getdatarakproduk', 'LokasiProduk::getDataRakProduk');
+    // $routes->resource('lokasiproduk');
+    $routes->get('lokasiproduk/new', 'LokasiProduk::new');
+    $routes->post('lokasiproduk/', 'LokasiProduk::create');
+    $routes->get('lokasiproduk/rak_byruangan', 'LokasiProduk::RakbyRuangan');
+    $routes->get('lokasiproduk/stok_byidproduk', 'LokasiProduk::StokbyProduk');
+
     
 });
 
