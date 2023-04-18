@@ -7,7 +7,7 @@
             <div class="invalid-feedback error_nama"></div>
         </div>
     </div>
-            
+
     <div class="row mb-3">
         <label for="nama" class="col-sm-3 col-form-label">Kode Ruangan</label>
         <div class="col-sm-9">
@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <div class="col-md-9 offset-3 mb-3">
+    <div class="text-center">
         <button id="tombolSimpan" class="btn px-5 btn-outline-primary" type="submit">Simpan<i class="fa-fw fa-solid fa-check"></i></button>
     </div>
 </form>
@@ -24,7 +24,7 @@
 <script>
     $('#form').submit(function(e) {
         e.preventDefault();
-        
+
         $.ajax({
             type: "post",
             url: $(this).attr('action'),
@@ -58,21 +58,15 @@
                         $('#kodeRuangan').removeClass('is-invalid');
                         $('#kodeRuangan').addClass('is-valid');
                     }
-                    
+
                 }
                 if (response.success) {
                     $('#my-modal').modal('hide');
-                    Swal.fire({
+                    Toast.fire({
                         icon: 'success',
-                        title: 'Berhasil',
-                        text: response.success,
-                    }).then((value) => {
-                        location.href = "<?= base_url() ?>/ruangan";
-                        Toast.fire({
-                            icon: 'success',
-                            title: response.success
-                        })
+                        title: response.success
                     })
+                    $('#tabel').DataTable().ajax.reload();
                 }
             },
             error: function(e) {

@@ -49,14 +49,12 @@
     <input type="hidden" id="stokAwal" name="stokAwal">
 
     <div class="text-center">
-        <a class="btn px-5 btn-outline-danger" data-bs-dismiss="modal" aria-label="Close">Batal 
+        <a class="btn px-5 btn-outline-danger" data-bs-dismiss="modal" aria-label="Close">Batal
             <i class="fa-fw fa-solid fa-xmark"></i>
         </a>
         <button id="tombolSimpan" class="btn px-5 btn-outline-primary" type="submit">Simpan<i class="fa-fw fa-solid fa-check"></i></button>
     </div>
 </form>
-
-<?= $this->include('MyLayout/js') ?>
 
 <script>
     $(document).ready(function() {
@@ -78,7 +76,7 @@
 
         $('#idRuangan').change(function() {
             let idRuangan = $(this).val();
-            
+
             if (idRuangan != '') {
                 $.ajax({
                     type: 'get',
@@ -95,7 +93,7 @@
 
         $('#idProduk').change(function() {
             let idProduk = $(this).val();
-            
+
             if (idProduk != '') {
                 $.ajax({
                     type: 'get',
@@ -103,7 +101,8 @@
                     data: 'idProduk=' + idProduk,
                     success: function(html) {
                         $('#stokAwal').val(html);
-                        if(html == "Stok habis"){
+                        if (html == "Stok habis") {
+                            $('#stok').val(0);
                             $('#stokValidasi').html(html);
                             $('#stok').addClass('is-invalid');
                             $('#stok').attr('readonly', true);
@@ -112,7 +111,6 @@
                             $('#stok').val(html);
                             $('#stokValidasi').html('');
                             $('#stok').removeClass('is-invalid');
-                            $('#stok').addClass('is-valid');
                             $('#stok').attr('readonly', false);
                             $('#tombolSimpan').attr('hidden', false);
                         }
@@ -122,12 +120,12 @@
                 $('#stok').val('');
             }
         })
-     })
+    })
 
 
     $('#form').submit(function(e) {
         e.preventDefault();
-        
+
         $.ajax({
             type: "post",
             url: $(this).attr('action'),
@@ -177,7 +175,7 @@
                         $('#stok').removeClass('is-invalid');
                         $('#stok').addClass('is-valid');
                     }
-                    
+
                 }
                 if (response.success) {
                     $('#my-modal').modal('hide');
@@ -185,7 +183,7 @@
                         icon: 'success',
                         title: response.success
                     });
-                    location.href = "<?= base_url() ?>/produkruangan";
+                    $('#tabel').DataTable().ajax.reload();
                 }
             },
             error: function(e) {

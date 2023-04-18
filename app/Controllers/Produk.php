@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\GudangModel;
+use App\Models\LokasiProdukModel;
 use App\Models\ProdukModel;
 use App\Models\ProdukPlanModel;
 use CodeIgniter\RESTful\ResourcePresenter;
@@ -46,8 +46,10 @@ class Produk extends ResourcePresenter
         if ($this->request->isAJAX()) {
             $modelProduk = new ProdukModel();
             $modelProdukPlan = new ProdukPlanModel();
+            $modelLokasiProduk = new LokasiProdukModel();
 
             $produk = $modelProduk->getProduk($id);
+            $lokasi_produk = $modelLokasiProduk->getLokasiProduk($id);
 
             if ($produk['tipe'] == 'SET' || $produk['tipe'] == 'SINGLE') {
 
@@ -71,6 +73,7 @@ class Produk extends ResourcePresenter
                         'validation'    => \Config\Services::validation(),
                         'tipe'          => $produk['tipe'],
                         'produk'        => $produk,
+                        'lokasi_produk' => $lokasi_produk,
                         'all_plan'      => $all_plan,
                         'virtual_stok'  => $virtual_stok,
                         'bisa_membuat'  => $bisa_membuat,
@@ -83,6 +86,7 @@ class Produk extends ResourcePresenter
                         'validation'    => \Config\Services::validation(),
                         'tipe'          => $produk['tipe'],
                         'produk'        => $produk,
+                        'lokasi_produk' => $lokasi_produk,
                         'all_plan'      => $all_plan,
                         'virtual_stok'  => '',
                         'bisa_membuat'  => 0,
@@ -116,6 +120,7 @@ class Produk extends ResourcePresenter
                         'validation'    => \Config\Services::validation(),
                         'tipe'          => $produk['tipe'],
                         'produk'        => $produk,
+                        'lokasi_produk' => $lokasi_produk,
                         'all_plan'      => $all_plan,
                         'virtual_stok'  => $virtual_stok,
                         'bisa_membuat'  => 0,
@@ -128,6 +133,7 @@ class Produk extends ResourcePresenter
                         'validation'    => \Config\Services::validation(),
                         'tipe'          => $produk['tipe'],
                         'produk'        => $produk,
+                        'lokasi_produk' => $lokasi_produk,
                         'all_plan'      => $all_plan,
                         'virtual_stok'  => '',
                         'bisa_membuat'  => 0,
@@ -145,13 +151,5 @@ class Produk extends ResourcePresenter
         } else {
             return 'Tidak bisa load';
         }
-    }
-
-
-    public function getIdGudang()
-    {
-        $gudangPJ = getIdGudangByIdUser(user()->id);
-
-        dd($gudangPJ);
     }
 }

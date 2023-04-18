@@ -139,18 +139,9 @@
                 </div>
             </div>
             <div class="col-md-9">
-                <?= $produk['gudang'] ?>
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-3">
-                <div class="fw-bold">
-                    &nbsp;&nbsp; Stok di Gudang
-                </div>
-            </div>
-            <div class="col-md-9">
-                <?= $produk['stok'] ?> <?= $produk['satuan'] ?>
+                <?php foreach ($lokasi_produk as $lp) : ?>
+                    <p><?= $lp['gudang'] ?> - <?= $lp['total_stok'] ?></p>
+                <?php endforeach; ?>
             </div>
         </div>
 

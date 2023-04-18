@@ -29,7 +29,7 @@
                 <tr>
                     <th class="text-center" width="5%">No</th>
                     <th class="text-center" width="15%">Kode</th>
-                    <th class="text-center" width="25%">Nama</th>
+                    <th class="text-center" width="70%">Nama</th>
                     <th class="text-center" width="10%">Aksi</th>
                 </tr>
             </thead>

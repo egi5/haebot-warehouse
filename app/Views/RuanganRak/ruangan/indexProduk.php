@@ -10,7 +10,7 @@
             <h3 style="color: #566573;">Data Produk</h3>
         </div>
         <div class="me-2 mb-1">
-            <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>ruanganRak">
+            <a class="btn btn-sm btn-outline-dark" href="<?= site_url() ?>ruangan-rak">
                 <i class="fa-fw fa-solid fa-arrow-left"></i> Kembali
             </a>
         </div>
@@ -33,9 +33,9 @@
             <thead>
                 <tr>
                     <th class="text-center" width="5%">No</th>
-                    <th class="text-center" width="15%">Ruangan</th>
-                    <th class="text-center" width="25%">Produk</th>
-                    <th class="text-center" width="10%">Stok</th>
+                    <th class="text-center" width="40%">Ruangan</th>
+                    <th class="text-center" width="40%">Produk</th>
+                    <th class="text-center" width="15%">Stok</th>
                 </tr>
             </thead>
             <tbody>
@@ -102,7 +102,8 @@
                     data: 'produk'
                 },
                 {
-                    data: 'stok'
+                    data: 'stok',
+                    className: 'text-center'
                 },
             ]
         });
@@ -141,7 +142,6 @@
             }
         })
     }
-
 </script>
 
 <?= $this->endSection() ?>

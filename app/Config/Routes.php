@@ -35,7 +35,7 @@ $routes->get('/', 'AuthController::login');
 $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
 
     $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'permission:Dashboard']);
-    $routes->get('ruanganRak', 'Menu::RuanganRak');
+    $routes->get('ruangan-rak', 'Menu::RuanganRak');
     $routes->get('ruangan', 'Ruangan::index');
     $routes->get('produkruangan', 'LokasiProduk::indexRuangan');
     $routes->get('rak', 'Rak::index');
@@ -52,28 +52,24 @@ $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
     $routes->get('getdataproduk', 'Produk::getDataProduk', ['filter' => 'permission:Data Master,Penanggung Jawab Gudang']);
     $routes->post('produkplan', 'ProdukPlan::create', ['filter' => 'permission:Data Master,Penanggung Jawab Gudang']);
 
-    // coba get id_gudang dari id_user
-    $routes->get('cari-id-gudang', 'Produk::getIdGudang', ['filter' => 'permission:Data Master,Penanggung Jawab Gudang']);
 
     // Ruangan
     $routes->resource('ruangan');
     $routes->get('getdataruangan', 'Ruangan::getDataRuangan');
-    
+
 
     // Rak
     $routes->resource('rak');
     $routes->get('getdatarak', 'Rak::getDataRak');
 
+
     // Lokasi Produk
     $routes->get('getdataruanganproduk', 'LokasiProduk::getDataRuanganProduk');
     $routes->get('getdatarakproduk', 'LokasiProduk::getDataRakProduk');
-    // $routes->resource('lokasiproduk');
     $routes->get('lokasiproduk/new', 'LokasiProduk::new');
     $routes->post('lokasiproduk/', 'LokasiProduk::create');
     $routes->get('lokasiproduk/rak_byruangan', 'LokasiProduk::RakbyRuangan');
     $routes->get('lokasiproduk/stok_byidproduk', 'LokasiProduk::StokbyProduk');
-
-    
 });
 
 /*

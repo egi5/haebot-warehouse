@@ -32,14 +32,10 @@
     </div>
 
     <div class="text-center">
-        <a class="btn px-5 btn-outline-danger" data-bs-dismiss="modal" aria-label="Close">Batal 
-            <i class="fa-fw fa-solid fa-xmark"></i>
-        </a>
         <button id="#tombolSimpan" class="btn px-5 btn-outline-primary" type="submit">Simpan<i class="fa-fw fa-solid fa-check"></i></button>
     </div>
 </form>
 
-<?= $this->include('MyLayout/js') ?>
 
 <script>
     $(document).ready(function() {
@@ -48,12 +44,12 @@
             tags: true,
             dropdownParent: $('#my-modal')
         });
-     })
+    })
 
 
     $('#form').submit(function(e) {
         e.preventDefault();
-        
+
         $.ajax({
             type: "post",
             url: $(this).attr('action'),
@@ -95,7 +91,7 @@
                         $('#kodeRak').removeClass('is-invalid');
                         $('#kodeRak').addClass('is-valid');
                     }
-                    
+
                 }
                 if (response.success) {
                     $('#my-modal').modal('hide');
@@ -103,7 +99,7 @@
                         icon: 'success',
                         title: response.success
                     });
-                    location.href = "<?= base_url() ?>/rak";
+                    $('#tabel').DataTable().ajax.reload();
                 }
             },
             error: function(e) {

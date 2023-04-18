@@ -28,11 +28,11 @@
         <table class="table table-hover table-striped table-bordered" width="100%" id="tabel">
             <thead>
                 <tr>
-                    <th class="text-center" width="3%">No</th>
+                    <th class="text-center" width="5%">No</th>
                     <th class="text-center" width="15%">Kode</th>
-                    <th class="text-center" width="25%">Nama</th>
-                    <th class="text-center" width="25%">Ruangan</th>
-                    <th class="text-center" width="15%">Aksi</th>
+                    <th class="text-center" width="35%">Nama</th>
+                    <th class="text-center" width="35%">Ruangan</th>
+                    <th class="text-center" width="10%">Aksi</th>
                 </tr>
             </thead>
             <tbody>

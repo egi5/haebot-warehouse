@@ -41,4 +41,19 @@ class LokasiProdukModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+
+
+    public function getLokasiProduk($id_produk)
+    {
+        $data =  $this->db->table('lokasi_produk')
+            ->select('lokasi_produk.*, gudang.nama as gudang, sum(lokasi_produk.stok) as total_stok')
+            ->join('gudang', 'lokasi_produk.id_gudang = gudang.id', 'left')
+            ->where('lokasi_produk.id_produk', $id_produk)
+            ->groupBy('lokasi_produk.id_gudang')
+            ->get()
+            ->getResultArray();
+
+        return $data;
+    }
 }

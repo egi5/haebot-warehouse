@@ -2,28 +2,13 @@
 
 namespace App\Controllers;
 
-use App\Models\GudangModel;
-use App\Models\RuanganModel;
 use App\Models\LokasiProdukModel;
-use App\Models\ProdukModel;
 use CodeIgniter\RESTful\ResourcePresenter;
 use \Hermawan\DataTables\DataTable;
 
 class LokasiProduk extends ResourcePresenter
 {
     protected $helpers = ['form', 'stok_helper'];
-
-
-    public function index()
-    {
-        //
-    }
-
-
-    public function show($id = null)
-    {
-        //
-    }
 
 
     public function indexRuangan()
@@ -40,22 +25,22 @@ class LokasiProduk extends ResourcePresenter
 
     public function getDataRuanganProduk()
     {
-        // if ($this->request->isAJAX()) {
+        if ($this->request->isAJAX()) {
             $gudang       = getIdGudangByIdUser(user()->id);
             $idGudang     = $gudang['id_gudang'];
             $modelLokasi  = new LokasiProdukModel();
-            $data         = $modelLokasi->select('ruangan.nama as ruangan, produk.nama as produk , lokasi_produk.stok')
-                                        ->join('ruangan', 'lokasi_produk.id_ruangan = ruangan.id', 'left')
-                                        ->join('produk', 'lokasi_produk.id_produk = produk.id', 'left')
-                                        ->where('lokasi_produk.id_gudang', $idGudang);
-                                        // ->groupBy('lokasi_produk.id_rak');
+            $data         = $modelLokasi->select('ruangan.nama as ruangan, produk.nama as produk, SUM(lokasi_produk.stok) as stok')
+                ->join('ruangan', 'lokasi_produk.id_ruangan = ruangan.id', 'left')
+                ->join('produk', 'lokasi_produk.id_produk = produk.id', 'left')
+                ->where('lokasi_produk.id_gudang', $idGudang)
+                ->groupBy('lokasi_produk.id_produk, lokasi_produk.id_ruangan');
 
             return DataTable::of($data)
                 ->addNumbering('no')
                 ->toJson(true);
-        // } else {
-        //     return "Tidak bisa load data.";
-        // }
+        } else {
+            return "Tidak bisa load data.";
+        }
     }
 
 
@@ -65,11 +50,12 @@ class LokasiProduk extends ResourcePresenter
             $gudang       = getIdGudangByIdUser(user()->id);
             $idGudang     = $gudang['id_gudang'];
             $modelLokasi  = new LokasiProdukModel();
-            $data         = $modelLokasi->select('rak.nama as rak, ruangan.nama as ruangan, produk.nama as produk , lokasi_produk.stok')
-                                        ->join('rak', 'lokasi_produk.id_rak = rak.id', 'left')
-                                        ->join('ruangan', 'lokasi_produk.id_ruangan = ruangan.id', 'left')
-                                        ->join('produk', 'lokasi_produk.id_produk = produk.id', 'left')
-                                        ->where('lokasi_produk.id_gudang', $idGudang);
+            $data         = $modelLokasi->select('rak.nama as rak, ruangan.nama as ruangan, produk.nama as produk, SUM(lokasi_produk.stok) as stok')
+                ->join('rak', 'lokasi_produk.id_rak = rak.id', 'left')
+                ->join('ruangan', 'lokasi_produk.id_ruangan = ruangan.id', 'left')
+                ->join('produk', 'lokasi_produk.id_produk = produk.id', 'left')
+                ->where('lokasi_produk.id_gudang', $idGudang)
+                ->groupBy('lokasi_produk.id_produk, lokasi_produk.id_rak');
 
             return DataTable::of($data)
                 ->addNumbering('no')
@@ -82,28 +68,28 @@ class LokasiProduk extends ResourcePresenter
 
     public function new()
     {
-            $modelLokasi  = new LokasiProdukModel();
-            $lokasi       = $modelLokasi->findAll();
-            $gudang       = getIdGudangByIdUser(user()->id);
-            $idGudang     = $gudang['id_gudang'];
+        $modelLokasi  = new LokasiProdukModel();
+        $lokasi       = $modelLokasi->findAll();
+        $gudang       = getIdGudangByIdUser(user()->id);
+        $idGudang     = $gudang['id_gudang'];
 
-            $db = \Config\Database::connect();
-            $produk  = $db->table('produk');
-            $ruangan = $db->table('ruangan');
-            $rak     = $db->table('rak');
+        $db = \Config\Database::connect();
+        $produk  = $db->table('produk');
+        $ruangan = $db->table('ruangan');
+        $rak     = $db->table('rak');
 
-            $data = [
-                'lokasiproduk'    => $lokasi,
-                'produk'          => $produk->get()->getResultArray(),
-                'ruangan'         => $ruangan->where('id_gudang', $idGudang)->get()->getResultArray(),
-                'rak'             => $rak->where('id_gudang', $idGudang)->get()->getResultArray(),  
-            ];
+        $data = [
+            'lokasiproduk'    => $lokasi,
+            'produk'          => $produk->get()->getResultArray(),
+            'ruangan'         => $ruangan->where('id_gudang', $idGudang)->get()->getResultArray(),
+            'rak'             => $rak->where('id_gudang', $idGudang)->get()->getResultArray(),
+        ];
 
-            $json = [
-                'data'       => view('ruanganrak/lokasiproduk/add', $data),
-            ];
+        $json = [
+            'data'       => view('ruanganrak/lokasiproduk/add', $data),
+        ];
 
-            echo json_encode($json);
+        echo json_encode($json);
     }
 
 
@@ -132,13 +118,13 @@ class LokasiProduk extends ResourcePresenter
     {
         $idProduk = $this->request->getVar('idProduk');
 
-        $db      = \Config\Database::connect();
+        $db             = \Config\Database::connect();
         $builderProduk  = $db->table('produk')->select('stok')->where('id', $idProduk);
-        $listProduk     =  $builderProduk->groupBy('stok')->get()->getRowArray();
+        $listProduk     = $builderProduk->get()->getRowArray();
 
         $builderLokasi  = $db->table('lokasi_produk')->selectSum('stok')->where('id_produk', $idProduk);
-        $listLokasi     = $builderLokasi->get()->getRowArray();  
-        
+        $listLokasi     = $builderLokasi->get()->getRowArray();
+
         $sisaStok = $listProduk['stok'] - $listLokasi['stok'];
 
         if ($sisaStok) {
@@ -153,7 +139,7 @@ class LokasiProduk extends ResourcePresenter
     {
         if ($this->request->isAJAX()) {
             $stokAwal = $this->request->getPost('stokAwal');
-            
+
             $validasi = [
                 'idProduk'       => [
                     'rules'  => 'required',
@@ -174,7 +160,7 @@ class LokasiProduk extends ResourcePresenter
                     ]
                 ],
                 'stok'  => [
-                    'rules'  => 'required|less_than_equal_to['.$stokAwal.']',
+                    'rules'  => 'required|less_than_equal_to[' . $stokAwal . ']',
                     'errors' => [
                         'required'  => 'Stok harus diisi.',
                         'less_than_equal_to' => 'Jumlah melebihi stok yg tersedia'
@@ -202,7 +188,7 @@ class LokasiProduk extends ResourcePresenter
 
                 $idProduk       = $this->request->getPost('idProduk');
                 $idRuangan      = $this->request->getPost('idRuangan');
-                $idRak          = $this->request->getPost('idRak'); 
+                $idRak          = $this->request->getPost('idRak');
                 $stok           = $this->request->getPost('stok');
 
                 $lokasiProduk   = $modelLokasi->selectSum('stok')->where([
@@ -210,17 +196,16 @@ class LokasiProduk extends ResourcePresenter
                     'id_ruangan'      => $this->request->getPost('idRuangan'),
                     'id_rak'          => $this->request->getPost('idRak')
                 ])->get()->getRowArray();
-                
-                if($lokasiProduk['stok'] != 0){
-                    $modelLokasi->set('stok', $stok+$lokasiProduk['stok']);
+
+                if ($lokasiProduk['stok'] != 0) {
+                    $modelLokasi->set('stok', $stok + $lokasiProduk['stok']);
                     $modelLokasi->where([
                         'id_produk'       => $this->request->getPost('idProduk'),
                         'id_ruangan'      => $this->request->getPost('idRuangan'),
                         'id_rak'          => $this->request->getPost('idRak')
                     ]);
                     $modelLokasi->update();
-    
-                } else { 
+                } else {
                     $data = [
                         'id_produk'    => $idProduk,
                         'id_gudang'    => $idGudang,
@@ -228,7 +213,7 @@ class LokasiProduk extends ResourcePresenter
                         'id_rak'       => $idRak,
                         'stok'         => $stok,
                     ];
-    
+
                     $modelLokasi->save($data);
                 }
 

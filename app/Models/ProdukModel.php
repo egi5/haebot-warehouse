@@ -49,9 +49,8 @@ class ProdukModel extends Model
     public function getProduk($id_produk)
     {
         $data =  $this->db->table($this->table)
-            ->select('produk.*, produk_kategori.nama as kategori, gudang.nama as gudang')
+            ->select('produk.*, produk_kategori.nama as kategori')
             ->join('produk_kategori', 'produk.id_kategori = produk_kategori.id', 'left')
-            ->join('gudang', 'produk.id_gudang = gudang.id', 'left')
             ->where('produk.id', $id_produk)
             ->get()
             ->getRowArray();

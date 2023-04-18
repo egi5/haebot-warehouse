@@ -27,11 +27,20 @@
                 <?php endif; ?>
 
                 <?php if (has_permission('Penanggung Jawab Gudang')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>ruanganRak">
+                    <a class="nav-link" href="<?= base_url() ?>ruangan-rak">
                         <div class="sb-nav-link-icon">
                             <i class="fa-fw fa-solid fa-warehouse"></i>
                         </div>
                         Ruangan & Rak
+                    </a>
+                <?php endif; ?>
+
+                <?php if (has_permission('Penanggung Jawab Gudang')) : ?>
+                    <a class="nav-link" href="<?= base_url() ?>stock-opname">
+                        <div class="sb-nav-link-icon">
+                            <i class="fa-fw fa-solid fa-warehouse"></i>
+                        </div>
+                        Stock Opname
                     </a>
                 <?php endif; ?>
 
