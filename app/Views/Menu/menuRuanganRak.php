@@ -4,7 +4,7 @@
 
 
 <main class="p-md-3 p-2">
-    <h3 style="color: #566573;">Laporan</h3>
+    <h3 style="color: #566573;">Ruangan dan Rak</h3>
 
     <hr>
 

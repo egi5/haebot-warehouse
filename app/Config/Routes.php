@@ -40,6 +40,7 @@ $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
     $routes->get('produkruangan', 'LokasiProduk::indexRuangan');
     $routes->get('rak', 'Rak::index');
     $routes->get('produkrak', 'LokasiProduk::indexRak');
+    $routes->get('stockopname', 'StockOpname::index');
 
     // GetData
     $routes->get('/wilayah/kota_by_provinsi', 'GetWilayah::KotaByProvinsi');
@@ -70,6 +71,25 @@ $routes->group('', ['filter' => 'isLoggedIn'], function ($routes) {
     $routes->post('lokasiproduk/', 'LokasiProduk::create');
     $routes->get('lokasiproduk/rak_byruangan', 'LokasiProduk::RakbyRuangan');
     $routes->get('lokasiproduk/stok_byidproduk', 'LokasiProduk::StokbyProduk');
+
+
+    // Stock Opname
+    // $routes->resource('stockopname', ['filter' => 'permission:Data Master,Penanggung Jawab Gudang']);
+    $routes->get('stockopname/new', 'StockOpname::new');
+    $routes->post('stockopname/', 'StockOpname::create');
+    $routes->get('getdatastok', 'StockOpname::getDataStok');
+    $routes->get('detailstock/(:num)', 'StockOpname::show/$1');
+
+
+    // Stock Opname Detail
+    $routes->get('/list_stok/(:any)', 'StockOpnameDetail::newStokProduk/$1');
+    $routes->get('stockopname/stokbyproduk', 'StockOpnameDetail::StokbyProduk');
+    $routes->post('stockopnamedetail/', 'StockOpnameDetail::create');
+    $routes->post('list_stok_produk', 'StockOpnameDetail::getListProdukStock');
+    $routes->delete('stok_produk_delete/(:any)', 'StockOpnameDetail::delete/$1');
+    $routes->post('stok_produk_update/(:any)', 'StockOpnameDetail::update/$1');
+    $routes->post('check_list_produk', 'StockOpnameDetail::checkListProduk');
+    $routes->post('simpanstok', 'StockOpnameDetail::updateStatusStock');
 });
 
 /*

@@ -36,9 +36,9 @@
                 <?php endif; ?>
 
                 <?php if (has_permission('Penanggung Jawab Gudang')) : ?>
-                    <a class="nav-link" href="<?= base_url() ?>stock-opname">
+                    <a class="nav-link" href="<?= base_url() ?>stockopname">
                         <div class="sb-nav-link-icon">
-                            <i class="fa-fw fa-solid fa-warehouse"></i>
+                            <i class="fa-fw fa-solid fa-store"></i>
                         </div>
                         Stock Opname
                     </a>

@@ -192,17 +192,17 @@ class LokasiProduk extends ResourcePresenter
                 $stok           = $this->request->getPost('stok');
 
                 $lokasiProduk   = $modelLokasi->selectSum('stok')->where([
-                    'id_produk'       => $this->request->getPost('idProduk'),
-                    'id_ruangan'      => $this->request->getPost('idRuangan'),
-                    'id_rak'          => $this->request->getPost('idRak')
+                    'id_produk'       => $idProduk,
+                    'id_ruangan'      => $idRuangan,
+                    'id_rak'          => $idRak
                 ])->get()->getRowArray();
 
                 if ($lokasiProduk['stok'] != 0) {
                     $modelLokasi->set('stok', $stok + $lokasiProduk['stok']);
                     $modelLokasi->where([
-                        'id_produk'       => $this->request->getPost('idProduk'),
-                        'id_ruangan'      => $this->request->getPost('idRuangan'),
-                        'id_rak'          => $this->request->getPost('idRak')
+                        'id_produk'    => $idProduk,
+                        'id_ruangan'   => $idRuangan,
+                        'id_rak'       => $idRak
                     ]);
                     $modelLokasi->update();
                 } else {
