@@ -27,32 +27,26 @@
                 </div>
                 <div class="card-body" style="background-color: #E6ECF0;">
                     <form autocomplete="off" class="row g-3" action="<?= site_url() ?>stockopnamedetail" method="POST" id="form">
-                        <div class="mb-10">
+                        <div class="mb-1">
                             <p class="mb-1">Produk</p>
-                            <!-- <div class="input-group"> -->
-                                <select style="width: 60%;" name="idProduk" id="idProduk">
-                                    <option>Pilih Produk</option>
-                                    <?php foreach ($produk as $pr) : ?>
-                                        <option value="<?= $pr['id'] ?>"><?= $pr['nama'] ?></option>
-                                    <?php endforeach ?>
-                                </select>
-                                <div class="invalid-feedback error_idProduk"></div>
-                            <!-- </div> -->
+                            <select style="width: 60%;" name="idProduk" id="idProduk">
+                                <option>Pilih Produk</option>
+                                <?php foreach ($produk as $pr) : ?>
+                                    <option value="<?= $pr['id'] ?>"><?= $pr['nama'] ?></option>
+                                <?php endforeach ?>
+                            </select>
+                            <div class="invalid-feedback error_idProduk"></div>
                         </div>
                         <div>
                             <div class="row mb-3">
                                 <div class="col-sm-3">
                                     <p class="mb-1">Stok Fisik</p>
-                                    <!-- <div class="input-group mb-3"> -->
-                                        <input style="width: 90%;" type="number" class="form-control" placeholder="Jumlah Stok Fisik" name="stokFisik" id="stokFisik">
-                                    <!-- </div> -->
+                                    <input style="width: 90%;" type="number" class="form-control" placeholder="Jumlah Stok Fisik" name="stokFisik" id="stokFisik">
                                 </div>
                                 <div class="col-sm-3">
                                     <p class="mb-1">Jumlah Stok Virtual</p>
-                                    <!-- <div class="input-group mb-3"> -->
-                                        <input style="width: 90%;" type="text" class="form-control" name="stokVirtual" id="stokVirtual" readonly="">
-                                        <div class="invalid-feedback error_stok"></div>
-                                    <!-- </div> -->
+                                    <input style="width: 90%;" type="text" class="form-control" name="stokVirtual" id="stokVirtual" readonly="">
+                                    <div class="invalid-feedback error_stok"></div>
                                 </div>
                                 <div class="col-sm-4">
                                     <br>

@@ -19,7 +19,6 @@ class StockOpnameDetail extends ResourcePresenter
         $modelStok      = new StockOpnameModel();
         $produk         = $modelProduk->findAll();
         $stok           = $modelStok->find($idStok);
-        // $stok           = $modelStok->select('id')->where(['id' => $idStok]);
 
         $data = [
             'produk'    => $produk,
@@ -36,8 +35,6 @@ class StockOpnameDetail extends ResourcePresenter
         $db             = \Config\Database::connect();
         $builderLokasi  = $db->table('lokasi_produk')->selectSum('stok')->where('id_produk', $idProduk);
         $listLokasi     = $builderLokasi->get()->getRowArray();
-        // $builderProduk  = $db->table('produk')->select('stok')->where('id', $idProduk);
-        // $listProduk     = $builderProduk->get()->getRowArray();
 
         echo $listLokasi['stok'];
     }
@@ -156,10 +153,8 @@ class StockOpnameDetail extends ResourcePresenter
 
     public function update($id = null)
     {
-        // $data = json_decode(file_get_contents('php://input'), true);
-
         $modelStokDetail    = new StockOpnameDetailModel();
-        // $jumlahFisik        = $data['new_jumlah_fisik'];   
+        
         $idStockOpname  = $this->request->getPost('id_stock'); 
         $jumlahFisik    = $this->request->getPost('new_jumlah_fisik');
         $jumlahVirtual  = $this->request->getPost('jumlah_virtual');
@@ -170,11 +165,9 @@ class StockOpnameDetail extends ResourcePresenter
             'selisih'       => $jumlahVirtual - $jumlahFisik
         ];
         $modelStokDetail->save($data_update_produk);
-        // return redirect()->back();
         
         $json = [
             'notif' => 'Berhasil update list stok produk',
-            'coba'=> $jumlahFisik
         ];
 
         echo json_encode($json);
